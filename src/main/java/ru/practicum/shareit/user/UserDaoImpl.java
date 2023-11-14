@@ -49,10 +49,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean isUniqueEmail(UserDto userDto) {
-        Long id = userDto.getId();
-        if (id != null) {
-
-        }
         boolean flag = true;
         String email = userDto.getEmail();
         for (User user : getAll()) {
