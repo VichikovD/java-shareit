@@ -2,7 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.InvalidIdException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserDao;
@@ -24,50 +24,54 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto create(ItemDto itemDto, Long userId) {
-        User owner = userDao.getById(userId)
-                .orElseThrow(() -> new InvalidIdException("User not found by Id " + userId));
+    public ItemDto create(ItemDto itemDto, long ownerId) {
+        User owner = userDao.getById(ownerId)
+                .orElseThrow(() -> new NotFoundException("User not found by Id " + ownerId));
 
-        Item itemToUpdate = itemMapper.createItemFromItemDtoAndOwnerId(itemDto, userId);
-        Item returnedItem = itemDao.create(itemToUpdate, userId);
+        Item itemToCreate = itemMapper.createItemFromItemDtoAndOwner(itemDto, owner);
+        Item returnedItem = itemDao.create(itemToCreate);
         itemDto.setId(returnedItem.getId());
         return itemDto;
     }
 
     @Override
-    public ItemDto update(ItemDto itemDto, Long userId) {
-        Long itemId = itemDto.getId();
-        User owner = userDao.getById(userId)
-                .orElseThrow(() -> new InvalidIdException("User not found by Id " + userId));
-        Item item = itemDao.getByUserIdAndItemId(userId, itemId)
-                .orElseThrow(() -> new InvalidIdException("User with id " + userId + " doesn't have item with id " + itemId));
+    public ItemDto update(ItemDto itemDto, long ownerId) {
+        long itemId = itemDto.getId();
+
+        Item item = itemDao.getByItemId(itemId)
+                .orElseThrow(() -> new NotFoundException("Item not found by id: " + itemId));
+        // Не понимаю почему проверку "владелец ли переданный пользователь данного объекта" нужно перенести в Dao,
+        // а проверка "есть ли вообще данный пользователь в базе" остается в сервисе.
+        if (!itemDao.isOwnerOfItem(ownerId, itemId)) {
+            throw new NotFoundException("User with id " + ownerId + " doesn't have item with id " + itemId);
+        }
 
         itemMapper.updateItemByItemDtoNotNullFields(itemDto, item);
-        itemDao.update(item, userId);
+        itemDao.update(item);
         return itemMapper.createItemDtoFromItem(item);
     }
 
     @Override
-    public List<ItemDto> getByUserId(Long userId) {
-        List<Item> itemList = itemDao.getByUserId(userId);
+    public List<ItemDto> getByOwnerId(long userId) {
+        List<Item> itemList = itemDao.getByOwnerId(userId);
         return itemMapper.createItemDtoListFromItemList(itemList);
     }
 
     @Override
-    public ItemDto getByItemId(Long itemId) {
+    public ItemDto getByItemId(long itemId) {
         Item item = itemDao.getByItemId(itemId)
-                .orElseThrow(() -> new InvalidIdException("Item not found by Id " + itemId));
+                .orElseThrow(() -> new NotFoundException("Item not found by Id " + itemId));
         return itemMapper.createItemDtoFromItem(item);
     }
 
     @Override
-    public List<ItemDto> getViaSubstringSearch(String text) {
-        List<Item> itemList = itemDao.getViaSubstringSearch(text.toLowerCase());
+    public List<ItemDto> search(String text) {
+        List<Item> itemList = itemDao.search(text.toLowerCase());
         return itemMapper.createItemDtoListFromItemList(itemList);
     }
 
     @Override
-    public void deleteByUserIdAndItemId(Long itemId, Long userId) {
-        itemDao.deleteByUserIdAndItemId(itemId, userId);
+    public void deleteByItemId(long itemId, long ownerId) {
+        itemDao.deleteByItemIdAndOwnerId(itemId, ownerId);
     }
 }

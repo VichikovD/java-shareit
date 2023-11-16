@@ -3,79 +3,90 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ItemDaoImpl implements ItemDao {
-    HashMap<Long, HashMap<Long, Item>> items;
+    HashMap<Long, Item> idItems;
+    HashMap<Long, List<Item>> ownerIdItems;
 
-    Long idCounter = 0L;
+    long idCounter = 0L;
 
     public ItemDaoImpl() {
-        this.items = new HashMap<>();
+        this.idItems = new HashMap<>();
+        this.ownerIdItems = new HashMap<>();
     }
 
-    private Long getNewId() {
+    private long getNewId() {
         return ++idCounter;
     }
 
     @Override
-    public Item create(Item item, Long userId) {
-        Long id = getNewId();
-        item.setId(id);
-        HashMap<Long, Item> userItemsMap = items.getOrDefault(userId, new HashMap<>());
-        userItemsMap.put(id, item);
-        items.put(userId, userItemsMap);
+    public Item create(Item item) {
+        long itemId = getNewId();
+        long ownerId = item.getOwner().getId();
+        item.setId(itemId);
+        List<Item> ownerItems = ownerIdItems.getOrDefault(ownerId, new ArrayList<>());
+
+        ownerItems.add(item);
+        ownerIdItems.put(ownerId, ownerItems);
+
+        idItems.put(itemId, item);
         return item;
     }
 
     @Override
-    public void update(Item item, Long userId) {
-        HashMap<Long, Item> userItemsMap = items.get(userId);
-        userItemsMap.put(item.getId(), item);
-        items.put(userId, userItemsMap);
+    public void update(Item item) {
+        long ownerId = item.getOwner().getId();
+        List<Item> ownerItems = ownerIdItems.getOrDefault(ownerId, new ArrayList<>());
+
+        ownerItems.remove(item);  // works if equals and hashCode by ID only
+        ownerItems.add(item);
+        ownerIdItems.put(ownerId, ownerItems);
+
+        idItems.put(item.getId(), item);
     }
 
     @Override
-    public List<Item> getByUserId(Long userId) {
-        return new ArrayList<>(items.get(userId).values());
+    public List<Item> getByOwnerId(Long ownerId) {
+        return ownerIdItems.getOrDefault(ownerId, new ArrayList<>());
     }
 
     @Override
     public Optional<Item> getByItemId(Long itemId) {
-        for (HashMap<Long, Item> map : items.values()) {
-            for (Item item : map.values()) {
-                if (Objects.equals(item.getId(), itemId)) {
-                    return Optional.of(item);
-                }
-            }
-        }
-        return Optional.empty();
+        return Optional.ofNullable(
+                idItems.get(itemId));
     }
 
-    @Override
-    public Optional<Item> getByUserIdAndItemId(Long userId, Long itemId) {
-        return Optional.ofNullable(items.getOrDefault(userId, new HashMap<>())
-                .get(itemId));
-    }
-
-    @Override
-    public List<Item> getViaSubstringSearch(String text) {
+    public List<Item> search(String text) {
         List<Item> searchResult = new ArrayList<>();
-        for (HashMap<Long, Item> map : items.values()) {
-            for (Item item : map.values()) {
-                if (itemContainsSubstring(item, text)) {
-                    searchResult.add(item);
-                }
+        for (Item item : idItems.values()) {
+            if (itemContainsSubstring(item, text)) {
+                searchResult.add(item);
             }
         }
         return searchResult;
     }
 
     @Override
-    public void deleteByUserIdAndItemId(Long itemId, Long userId) {
-        HashMap<Long, Item> userItemsMap = items.getOrDefault(userId, new HashMap<>());
-        userItemsMap.remove(itemId);
+    public void deleteByItemIdAndOwnerId(long itemId, long ownerId) {
+        List<Item> itemList = ownerIdItems.get(ownerId);
+        Item itemToDelete = Item.builder()
+                .id(itemId)
+                .build();
+
+        idItems.remove(itemId);
+        itemList.remove(itemToDelete);
+    }
+
+    @Override
+    public boolean isOwnerOfItem(long ownerId, long itemId) {
+        List<Item> ownerItems = ownerIdItems.getOrDefault(ownerId, new ArrayList<>());
+        Item item = idItems.get(itemId);
+        return ownerItems.contains(item);
     }
 
     private boolean itemContainsSubstring(Item item, String text) {

@@ -3,10 +3,9 @@ package ru.practicum.shareit.user;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistsException;
-import ru.practicum.shareit.exception.InvalidIdException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validation.ValidateService;
 
 import java.util.List;
 
@@ -14,14 +13,11 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     UserDao userDao;
     UserMapper userMapper;
-    ValidateService validateService;
 
     public UserServiceImpl(@Qualifier("userDaoImpl") UserDao userDao,
-                           UserMapper userMapper,
-                           ValidateService validateService) {
+                           UserMapper userMapper) {
         this.userDao = userDao;
         this.userMapper = userMapper;
-        this.validateService = validateService;
     }
 
     @Override
@@ -40,14 +36,13 @@ public class UserServiceImpl implements UserService {
     public UserDto update(UserDto userDto) {
         Long userId = userDto.getId();
         String email = userDto.getEmail();
-        validateService.validateId(userId);
 
         User userToUpdate = userDao.getById(userId)
-                .orElseThrow(() -> new InvalidIdException("User not found by Id " + userId));
+                .orElseThrow(() -> new NotFoundException("User not found by Id " + userId));
         if (!userDao.isUniqueEmail(userDto)) {
             throw new AlreadyExistsException("Email \"" + email + "\" already used");
         }
-        validateService.validateUserDtoNotNullFields(userDto);
+        // validateService.validateUserDtoNotNullFields(userDto);
 
         userMapper.updateUserByUserDtoNotNullFields(userDto, userToUpdate);
         userDao.update(userToUpdate);
@@ -63,7 +58,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
         userDao.getById(id)
-                .orElseThrow(() -> new InvalidIdException("User not found by Id " + id));
+                .orElseThrow(() -> new NotFoundException("User not found by Id " + id));
 
         userDao.deleteById(id);
     }
@@ -71,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(Long id) {
         User user = userDao.getById(id)
-                .orElseThrow(() -> new InvalidIdException("User not found by Id " + id));
+                .orElseThrow(() -> new NotFoundException("User not found by Id " + id));
         return userMapper.createUserDtoFromUser(user);
     }
 }

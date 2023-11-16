@@ -1,7 +1,6 @@
 package ru.practicum.shareit.validation;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.InvalidIdException;
 import ru.practicum.shareit.exception.ValidateException;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -9,12 +8,6 @@ import java.util.regex.Pattern;
 
 @Component
 public class ValidateService {
-    public void validateId(Long id) {
-        if (id == null) {
-            throw new InvalidIdException("Id should not be empty");
-        }
-    }
-
     public void validateUserDtoNotNullFields(UserDto userDto) {
         String emailRegex = "^(.+)@(\\S+)$";
         Pattern pattern = Pattern.compile(emailRegex);

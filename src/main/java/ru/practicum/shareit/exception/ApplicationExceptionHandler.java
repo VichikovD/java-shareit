@@ -42,10 +42,10 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleValidateException(InvalidIdException e) {
+    public ErrorResponse handleValidateException(NotFoundException e) {
         String errorMessage = e.getMessage();
-        log.error("InvalidIdException = {}", errorMessage);
-        return new ErrorResponse("InvalidIdException", errorMessage);
+        log.error("NotFoundException = {}", errorMessage);
+        return new ErrorResponse("NotFoundException", errorMessage);
     }
 
 

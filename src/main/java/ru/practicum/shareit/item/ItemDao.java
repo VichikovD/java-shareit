@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemDao {
-    Item create(Item item, Long userId);
+    Item create(Item item);
 
-    void update(Item item, Long userId);
+    void update(Item item);
 
-    List<Item> getByUserId(Long userId);
+    List<Item> getByOwnerId(Long userId);
 
     Optional<Item> getByItemId(Long userId);
 
-    Optional<Item> getByUserIdAndItemId(Long userId, Long itemId);
+    List<Item> search(String text);
 
-    List<Item> getViaSubstringSearch(String text);
+    void deleteByItemIdAndOwnerId(long itemId, long ownerId);
 
-    void deleteByUserIdAndItemId(Long itemId, Long userId);
+    boolean isOwnerOfItem(long ownerId, long itemId);
 }

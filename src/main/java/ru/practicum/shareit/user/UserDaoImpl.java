@@ -8,11 +8,13 @@ import java.util.*;
 
 @Repository
 public class UserDaoImpl implements UserDao {
-    HashMap<Long, User> users;
+    HashMap<Long, User> usersById;
+    HashMap<String, User> usersByEmail;
     Long idCounter = 0L;
 
     public UserDaoImpl() {
-        this.users = new HashMap<>();
+        this.usersById = new HashMap<>();
+        this.usersByEmail = new HashMap<>();
     }
 
     private Long getNewId() {
@@ -23,40 +25,52 @@ public class UserDaoImpl implements UserDao {
     public User create(User user) {
         Long userId = getNewId();
         user.setId(userId);
-        users.put(userId, user);
+        usersById.put(userId, user);
+        usersByEmail.put(user.getEmail(), user);
         return user;
     }
 
     @Override
     public void update(User user) {
-        users.put(user.getId(), user);
+        long id = user.getId();
+        String oldEmail = usersById.get(id)
+                .getEmail();
+
+        usersByEmail.remove(oldEmail);
+        usersByEmail.put(user.getEmail(), user);
+        usersById.put(id, user);
     }
 
     @Override
     public Optional<User> getById(Long id) {
-        return Optional.ofNullable(users.get(id));
+        User user = usersById.get(id);
+        if (user == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(
+                    User.builder()
+                            .id(user.getId())
+                            .name(user.getName())
+                            .email(user.getEmail())
+                            .build());
+        }
     }
 
     @Override
     public List<User> getAll() {
-        return new ArrayList<>(users.values());
+        return new ArrayList<>(usersById.values());
     }
 
     @Override
     public void deleteById(Long id) {
-        users.remove(id);
+        String oldEmail = usersById.get(id).getEmail();
+        usersById.remove(id);
+        usersByEmail.remove(oldEmail);
     }
 
     @Override
     public boolean isUniqueEmail(UserDto userDto) {
-        boolean flag = true;
-        String email = userDto.getEmail();
-        for (User user : getAll()) {
-            if (user.getEmail().equals(email) && !Objects.equals(user.getId(), userDto.getId())) {
-                flag = false;
-                break;
-            }
-        }
-        return flag;
+        User userFromRepository = usersByEmail.get(userDto.getEmail());
+        return userFromRepository == null || Objects.equals(userFromRepository.getId(), userDto.getId());
     }
 }
