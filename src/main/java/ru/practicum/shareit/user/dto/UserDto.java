@@ -15,8 +15,7 @@ import javax.validation.constraints.NotBlank;
 public class UserDto {
     private Long id;
 
-    @Email(groups = OnCreate.class, message = "Invalid user's email")
-    @EmailIfNotNull(groups = OnUpdate.class)
+    @Email(groups = {OnCreate.class, OnUpdate.class}, message = "Invalid user's email")
     @NotBlank(groups = OnCreate.class, message = "Film email can't be null or empty")
     private String email;
 

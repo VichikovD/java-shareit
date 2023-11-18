@@ -2,12 +2,14 @@ package ru.practicum.shareit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import ru.practicum.shareit.user.model.User;
 
 @SpringBootApplication
 public class ShareItApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(ShareItApp.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(ShareItApp.class, args);
     }
 
 }

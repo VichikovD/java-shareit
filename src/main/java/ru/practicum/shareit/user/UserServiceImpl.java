@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
         if (!userDao.isUniqueEmail(userDto)) {
             throw new AlreadyExistsException("Email \"" + email + "\" already used");
         }
-        // validateService.validateUserDtoNotNullFields(userDto);
 
         userMapper.updateUserByUserDtoNotNullFields(userDto, userToUpdate);
         userDao.update(userToUpdate);
