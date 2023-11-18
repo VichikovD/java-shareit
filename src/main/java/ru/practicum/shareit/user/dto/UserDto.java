@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.groupMarker.OnCreate;
 import ru.practicum.shareit.groupMarker.OnUpdate;
-import ru.practicum.shareit.validation.EmailIfNotNull;
 import ru.practicum.shareit.validation.NotEmptyIfNotNull;
 
 import javax.validation.constraints.Email;
