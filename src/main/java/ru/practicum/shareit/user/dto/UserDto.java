@@ -15,7 +15,7 @@ public class UserDto {
     private Long id;
 
     @Email(groups = {OnCreate.class, OnUpdate.class}, message = "Invalid user's email")
-    @NotBlank(groups = OnCreate.class, message = "Film email can't be null or empty")
+    @NotBlank(groups = OnCreate.class, message = "Invalid user's email. It should not be null or empty")
     private String email;
 
     @NotBlank(groups = OnCreate.class, message = "Invalid user's name. It should not be null or empty")
