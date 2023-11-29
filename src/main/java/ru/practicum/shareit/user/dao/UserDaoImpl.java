@@ -1,7 +1,6 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.dao;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -69,8 +68,17 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean isUniqueEmail(UserDto userDto) {
-        User userFromRepository = usersByEmail.get(userDto.getEmail());
-        return userFromRepository == null || Objects.equals(userFromRepository.getId(), userDto.getId());
+    public Optional<User> getByEmail(String email) {
+        User user = usersByEmail.get(email);
+        if (user == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(
+                    User.builder()
+                            .id(user.getId())
+                            .name(user.getName())
+                            .email(user.getEmail())
+                            .build());
+        }
     }
 }

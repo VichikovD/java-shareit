@@ -1,6 +1,5 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.dao;
 
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -17,5 +16,5 @@ public interface UserDao {
 
     void deleteById(Long id);
 
-    boolean isUniqueEmail(UserDto user);
+    Optional<User> getByEmail(String email);
 }

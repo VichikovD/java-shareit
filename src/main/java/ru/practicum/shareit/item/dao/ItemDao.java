@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.dao;
 
 import ru.practicum.shareit.item.model.Item;
 
@@ -18,5 +18,5 @@ public interface ItemDao {
 
     void deleteByItemIdAndOwnerId(long itemId, long ownerId);
 
-    boolean isOwnerOfItem(long ownerId, long itemId);
+    Optional<Item> findByIdAndOwnerId(long ownerId, long itemId);
 }

@@ -16,7 +16,7 @@ public class ItemMapper {
                 .owner(owner)
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
+                .isAvailable(itemDto.getAvailable())
                 .build();
     }
 
@@ -25,7 +25,7 @@ public class ItemMapper {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .available(item.getAvailable())
+                .available(item.getIsAvailable())
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class ItemMapper {
 
         Boolean available = itemDto.getAvailable();
         if (available != null) {
-            item.setAvailable(available);
+            item.setIsAvailable(available);
         }
     }
 }

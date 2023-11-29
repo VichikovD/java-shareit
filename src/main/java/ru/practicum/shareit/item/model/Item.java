@@ -4,25 +4,37 @@ import lombok.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-/**
- * TODO Sprint add-controllers.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder
+@Entity
+@Table(name = "items")
 public class Item {
+    @Id
+    @Column(name = "item_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private User owner;
-    private String name;
-    private String description;
-    private Boolean available;
 
-    public void updateByItemDto(ItemDto itemDto, Item item) {
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "is_available")
+    private Boolean isAvailable;
+
+/*    public void updateByItemDto(ItemDto itemDto, Item item) {
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }
@@ -32,11 +44,7 @@ public class Item {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-    }
-
-    public boolean isOwner(User user) {
-        return this.owner == user;
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {

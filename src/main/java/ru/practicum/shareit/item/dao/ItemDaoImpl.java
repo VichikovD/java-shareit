@@ -1,12 +1,9 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.dao;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class ItemDaoImpl implements ItemDao {
@@ -83,10 +80,14 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public boolean isOwnerOfItem(long ownerId, long itemId) {
+    public Optional<Item> findByIdAndOwnerId(long ownerId, long itemId) {
         List<Item> ownerItems = ownerIdItems.getOrDefault(ownerId, new ArrayList<>());
-        Item item = idItems.get(itemId);
-        return ownerItems.contains(item);
+        for (Item item : ownerItems) {
+            if (Objects.equals(item.getId(), itemId)) {
+                return Optional.of(item);
+            }
+        }
+        return Optional.empty();
     }
 
     private boolean itemContainsSubstring(Item item, String text) {
@@ -94,7 +95,7 @@ public class ItemDaoImpl implements ItemDao {
                 .toLowerCase();
         String description = item.getDescription()
                 .toLowerCase();
-        Boolean available = item.getAvailable();
+        Boolean available = item.getIsAvailable();
 
         return (!text.isBlank() && (name.contains(text) || description.contains(text)) && available);
     }
