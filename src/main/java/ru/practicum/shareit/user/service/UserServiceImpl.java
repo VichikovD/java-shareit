@@ -1,11 +1,9 @@
 package ru.practicum.shareit.user.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -40,7 +38,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("User not found by Id " + userId));
 
         Optional<User> optUserByEmail = userRepository.findByEmail(email);
-        if(optUserByEmail.isPresent()) {
+        if (optUserByEmail.isPresent()) {
             User userByEmail = optUserByEmail.get();
             if (!userByEmail.getId().equals(userId)) {
                 throw new AlreadyExistsException("Email \"" + email + "\" already used");

@@ -14,8 +14,8 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @PersistenceContext
-    EntityManager entityManager = null
-            ;
+    EntityManager entityManager = null;
+
     Optional<Booking> findByIdAndItemOwnerId(long bookingId, long OwnerId);
 
     @Query(value = "SELECT b " +
@@ -104,7 +104,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN items AS i ON b.item_id = i.item_id " +
             "JOIN users AS u ON b.booker_id = u.user_id " +
             "WHERE (b.start_date_time < ?2) AND (b.item_id IN ?1) AND (b.status = 'APPROVED') " +
-            "ORDER BY b.start_date_time DESC" , nativeQuery = true)
+            "ORDER BY b.start_date_time DESC", nativeQuery = true)
     List<Booking> findAllLastForDateTime(Collection<Long> itemIdList, LocalDateTime time);
 
     @Query(value = "SELECT * " +

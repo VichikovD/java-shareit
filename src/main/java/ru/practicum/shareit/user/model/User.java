@@ -6,7 +6,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
-import java.awt.print.Book;
 import java.util.Objects;
 import java.util.Set;
 

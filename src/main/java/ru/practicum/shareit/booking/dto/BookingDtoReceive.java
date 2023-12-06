@@ -1,11 +1,11 @@
 package ru.practicum.shareit.booking.dto;
-import org.springframework.format.annotation.DateTimeFormat;
-import ru.practicum.shareit.item.dto.ItemDto;
-
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor

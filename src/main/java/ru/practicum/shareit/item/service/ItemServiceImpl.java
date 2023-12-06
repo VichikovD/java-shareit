@@ -8,13 +8,13 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -112,7 +112,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Item not found by id: " + itemId));
         validatePossibilityToComment(userId, itemId);
 
-        Comment comment = CommentMapper.fromCommentDto(commentDto,item, user);
+        Comment comment = CommentMapper.fromCommentDto(commentDto, item, user);
         Comment commentToReturn = commentRepository.save(comment);
         return CommentMapper.toCommentDto(commentToReturn);
     }
@@ -173,7 +173,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void validatePossibilityToComment(long userId, long itemId) {
-        long bookingQuantity = bookingRepository.countAllPastForItemByTime(itemId, userId,  LocalDateTime.now());
+        long bookingQuantity = bookingRepository.countAllPastForItemByTime(itemId, userId, LocalDateTime.now());
         if (bookingQuantity < 1) {
             throw new NotAvailableException("User with id " + userId + " can not comment item with id " + itemId + "" +
                     " due to " + bookingQuantity + " times booked this item in past");

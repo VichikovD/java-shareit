@@ -1,13 +1,10 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.booking.model.Booking;
-//import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor

@@ -60,7 +60,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDtoSend> findAllBookingByOwnerIdAndState(@RequestParam(defaultValue = "ALL") BookingState state,
-                                                                 @RequestHeader("X-Sharer-User-Id") long userId) {
+                                                                @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("POST \"/bookings/owner?state={}\", Headers:(X-Sharer-User-Id)={}", state, userId);
         List<BookingDtoSend> bookingDtoSendList = bookingService.findAllBookingByOwnerIdAndState(userId, state);
         log.info(bookingDtoSendList.toString());
