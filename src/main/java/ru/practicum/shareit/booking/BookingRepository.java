@@ -16,7 +16,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @PersistenceContext
     EntityManager entityManager = null;
 
-    Optional<Booking> findByIdAndItemOwnerId(long bookingId, long OwnerId);
+    Optional<Booking> findByIdAndItemOwnerId(long bookingId, long ownerId);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
