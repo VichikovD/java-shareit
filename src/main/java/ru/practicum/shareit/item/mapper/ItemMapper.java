@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public class ItemMapper {
-    public Item createItemFromItemDtoAndOwner(ItemDto itemDto, User owner) {
+    public static Item createItemFromItemDtoAndOwner(ItemDto itemDto, User owner) {
         return Item.builder()
                 .id(null)
                 .owner(owner)
@@ -20,7 +20,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public ItemDto createItemDtoFromItem(Item item) {
+    public static ItemDto createItemDtoFromItem(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -29,7 +29,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public List<ItemDto> createItemDtoListFromItemList(List<Item> itemList) {
+    public static List<ItemDto> createItemDtoListFromItemList(List<Item> itemList) {
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item item : itemList) {
             itemDtoList.add(createItemDtoFromItem(item));
@@ -38,7 +38,7 @@ public class ItemMapper {
         return itemDtoList;
     }
 
-    public void updateItemByItemDtoNotNullFields(ItemDto itemDto, Item item) {
+    public static void updateItemByItemDtoNotNullFields(ItemDto itemDto, Item item) {
         String name = itemDto.getName();
         if (name != null) {
             item.setName(name);

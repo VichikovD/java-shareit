@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public class UserMapper {
-    public User createUserFromUserDto(UserDto userDto) {
+    public static User createUserFromUserDto(UserDto userDto) {
         return User.builder()
                 .id(null)
                 .name(userDto.getName())
@@ -17,7 +17,7 @@ public class UserMapper {
                 .build();
     }
 
-    public UserDto createUserDtoFromUser(User user) {
+    public static UserDto createUserDtoFromUser(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -25,7 +25,7 @@ public class UserMapper {
                 .build();
     }
 
-    public List<UserDto> createUserDtoListFromUserList(List<User> userList) {
+    public static List<UserDto> createUserDtoListFromUserList(List<User> userList) {
         List<UserDto> userDtoList = new ArrayList<>();
         for (User user : userList) {
             userDtoList.add(createUserDtoFromUser(user));
@@ -33,7 +33,7 @@ public class UserMapper {
         return userDtoList;
     }
 
-    public void updateUserByUserDtoNotNullFields(UserDto userDto, User user) {
+    public static void updateUserByUserDtoNotNullFields(UserDto userDto, User user) {
         String name = userDto.getName();
         if (name != null) {
             user.setName(name);

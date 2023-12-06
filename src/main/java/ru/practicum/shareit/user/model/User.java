@@ -2,9 +2,11 @@ package ru.practicum.shareit.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
+import java.awt.print.Book;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,7 +24,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "name")
@@ -31,6 +33,10 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "owner")
     private Set<Item> items;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "booker")
+    private Set<Booking> bookings;
 
     @Override
     public boolean equals(Object o) {

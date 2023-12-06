@@ -1,13 +1,17 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.*;
+import ru.practicum.shareit.booking.dto.BookingDtoItem;
 import ru.practicum.shareit.groupMarker.OnCreate;
 import ru.practicum.shareit.groupMarker.OnUpdate;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.validation.NotEmptyIfNotNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * TODO Sprint add-controllers.
@@ -31,6 +35,12 @@ public class ItemDto {
 
     @NotNull(groups = OnCreate.class, message = "Item available status should not be empty")
     private Boolean available;
+
+    private BookingDtoItem lastBooking;
+
+    private BookingDtoItem nextBooking;
+
+    private List<CommentDto> comments;
 
     @Override
     public boolean equals(Object o) {

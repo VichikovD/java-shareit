@@ -26,15 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        String email = userDto.getEmail();
-        Optional<User> optUserByEmail = userRepository.findByEmail(email);
-        if(optUserByEmail.isPresent()) {
-            throw new AlreadyExistsException("Email \"" + email + "\" already used");
-        }
-
-        User userToCreate = userMapper.createUserFromUserDto(userDto);
+        User userToCreate = UserMapper.createUserFromUserDto(userDto);
         User userCreated = userRepository.save(userToCreate);
-        return userMapper.createUserDtoFromUser(userCreated);
+        return UserMapper.createUserDtoFromUser(userCreated);
     }
 
     @Override
@@ -53,15 +47,15 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        userMapper.updateUserByUserDtoNotNullFields(userDto, userToUpdate);
+        UserMapper.updateUserByUserDtoNotNullFields(userDto, userToUpdate);
         userRepository.save(userToUpdate);
-        return userMapper.createUserDtoFromUser(userToUpdate);
+        return UserMapper.createUserDtoFromUser(userToUpdate);
     }
 
     @Override
     public List<UserDto> getAll() {
         List<User> userList = userRepository.findAll();
-        return userMapper.createUserDtoListFromUserList(userList);
+        return UserMapper.createUserDtoListFromUserList(userList);
     }
 
     @Override
@@ -76,6 +70,6 @@ public class UserServiceImpl implements UserService {
     public UserDto getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found by Id " + id));
-        return userMapper.createUserDtoFromUser(user);
+        return UserMapper.createUserDtoFromUser(user);
     }
 }
