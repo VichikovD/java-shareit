@@ -24,7 +24,7 @@ public class CommentDto {
     LocalDateTime created;
 
     @JsonIgnore
-    Long item_id;
+    Long itemId;
 
     @Override
     public boolean equals(Object o) {
