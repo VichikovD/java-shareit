@@ -19,6 +19,8 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -69,21 +71,20 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto respondToBooking(long ownerId, long bookingId, boolean approved) {
         Booking booking = bookingRepository.findByIdAndItemOwnerId(bookingId, ownerId)
                 .orElseThrow(() -> new NotFoundException("Booking with id " + bookingId + " not found for owner with id: " + ownerId));
-        /*
-        Booking booking = bookingRepository.findById(bookingId);
-        Item bookingItem = booking.getItem();
-        long itemOwnerId = bookingItem.getOwner()
-                .getId();
-        long itemId = bookingItem.getId();
-        if (itemOwnerId != userId) {
-            throw new LockedException(String.format("User with id %d is not owner of item with id %d", userId, itemId));
-        }
-        */
-        if (booking.getStatus().equals(BookingStatus.APPROVED)) {
-            throw new LockedException("Status can't be changed. Status locked as \"APPROVED\"");
-        }
-        booking.setStatus(BookingStatus.getBookingStatusByBoolean(approved));
+        long itemId = booking.getItem().getId();
+        LocalDateTime start = booking.getStart().toLocalDateTime();
+        LocalDateTime end = booking.getEnd().toLocalDateTime();
+        BookingStatus status = booking.getStatus();
 
+        if (status.equals(BookingStatus.APPROVED)) {
+            throw new LockedException("Status can't be changed. Status locked as \"" + status + "\"");
+        }
+        long countIntersection = bookingRepository.countIntersectionInTime(start, end, itemId);
+        if (countIntersection > 0) {
+            throw new NotAvailableException("Item to be booked is already booked in between date " + start + " and " + end);
+        }
+
+        booking.setStatus(BookingStatus.getBookingStatusByBoolean(approved));
         Booking bookingToReturn = bookingRepository.save(booking);
         return BookingMapper.bookingToBookingDtoSend(bookingToReturn);
     }

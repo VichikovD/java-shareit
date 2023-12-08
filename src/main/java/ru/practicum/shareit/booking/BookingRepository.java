@@ -117,7 +117,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "FROM bookings AS b " +
             "JOIN items AS i ON b.item_id = i.item_id " +
             "JOIN users AS u ON b.booker_id = u.user_id " +
-            "WHERE (b.start_date_time BETWEEN :start AND :end OR b.end_date_time BETWEEN :start AND :end) " +
+            "WHERE (b.start_date_time < :end AND b.end_date_time > :start) " +
             "AND (b.item_id = :itemId) AND (b.status = 'APPROVED')", nativeQuery = true)
     long countIntersectionInTime(LocalDateTime start, LocalDateTime end, long itemId);
 }
