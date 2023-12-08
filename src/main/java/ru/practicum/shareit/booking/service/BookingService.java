@@ -1,40 +1,19 @@
 package ru.practicum.shareit.booking.service;
 
-import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingDtoReceive;
-import ru.practicum.shareit.booking.dto.BookingDtoSend;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingReceiveDto;
 import ru.practicum.shareit.booking.state.BookingState;
 
 import java.util.List;
 
 public interface BookingService {
-    BookingDtoSend create(BookingDtoReceive bookingDtoReceive);
+    BookingDto create(BookingReceiveDto bookingReceiveDto);
 
-    BookingDtoSend respondToBooking(long userId, long bookingId, boolean approved);
+    BookingDto respondToBooking(long userId, long bookingId, boolean approved);
 
-    BookingDtoSend findBookingById(long userId, long bookingId);
+    BookingDto findBookingById(long userId, long bookingId);
 
-    List<BookingDtoSend> findAllBookingByBookerIdAndState(long bookerId, BookingState state);
+    List<BookingDto> findAllBookingByBookerIdAndState(long bookerId, BookingState state);
 
-    List<BookingDtoSend> findAllBookingByBookerId(long bookerId);
-
-    List<BookingDtoSend> findAllPastBookingByBookerId(long bookerId);
-
-    List<BookingDtoSend> findAllCurrentBookingByBookerId(long bookerId);
-
-    List<BookingDtoSend> findAllFutureBookingByBookerId(long bookerId);
-
-    List<BookingDtoSend> findAllBookingByBookerIdAndStatus(long bookerId, BookingStatus status);
-
-    List<BookingDtoSend> findAllBookingByOwnerIdAndState(long ownerId, BookingState state);
-
-    List<BookingDtoSend> findAllBookingByOwnerId(long ownerId);
-
-    List<BookingDtoSend> findAllPastBookingByOwnerId(long ownerId);
-
-    List<BookingDtoSend> findAllCurrentBookingByOwnerId(long ownerId);
-
-    List<BookingDtoSend> findAllFutureBookingByOwnerId(long ownerId);
-
-    List<BookingDtoSend> findAllBookingByOwnerIdAndStatus(long ownerId, BookingStatus status);
+    List<BookingDto> findAllBookingByOwnerIdAndState(long ownerId, BookingState state);
 }

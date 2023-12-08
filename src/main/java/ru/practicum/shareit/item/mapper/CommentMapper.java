@@ -23,7 +23,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentDto> toListCommentDto(List<Comment> commentList) {
+    public static List<CommentDto> toCommentDtoList(List<Comment> commentList) {
         List<CommentDto> commentDtoList = new ArrayList();
         for (Comment comment : commentList) {
             commentDtoList.add(toCommentDto(comment));

@@ -37,7 +37,7 @@ public class ApplicationExceptionHandler {
     public ErrorResponse handleUnsupportedStateException(UnsupportedStateException e) {
         String errorMessage = e.getMessage();
         log.error("Unsupported state Exception = {}", errorMessage);
-        return new ErrorResponse("UnsupportedStateException", errorMessage);
+        return new ErrorResponse(e.getMessage(), e.toString());
     }
 
     @ExceptionHandler
@@ -50,7 +50,7 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+    public ErrorResponse handleBookingStateConvertingException(MethodArgumentTypeMismatchException e) {
         String errorMessage = e.getMessage();
         log.error("Method Argument Type Mismatch Exception = {}", errorMessage);
         return new ErrorResponse("Unknown state: " + e.getValue(), e.getMessage());
@@ -79,15 +79,6 @@ public class ApplicationExceptionHandler {
         log.error("NotFoundException = {}", errorMessage);
         return new ErrorResponse("NotFoundException", errorMessage);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleOwnerBookingHisItemException(OwnerBookingHisItemException e) {
-        String errorMessage = e.getMessage();
-        log.error("OwnerBookingHisItemException = {}", errorMessage);
-        return new ErrorResponse("OwnerBookingHisItemException", errorMessage);
-    }
-
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
@@ -32,10 +31,6 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "owner")
     private Set<Item> items;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "booker")
-    private Set<Booking> bookings;
 
     @Override
     public boolean equals(Object o) {

@@ -1,20 +1,16 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-
-    @PersistenceContext
-    EntityManager entityManager = null;
 
     Optional<Booking> findByIdAndItemOwnerId(long bookingId, long ownerId);
 
@@ -25,61 +21,55 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE b.id = ?1 AND (b.item.owner.id = ?2 OR b.booker.id = ?2)")
     Optional<Booking> findByIdAndOwnerIdOrBookerId(long bookingId, long bookerId);
 
-    List<Booking> findAllByBookerIdOrderByStartDesc(long bookerId);
+    List<Booking> findAllByBookerId(long bookerId, Sort sort);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
-            "WHERE b.end < NOW() AND b.booker.id = ?1 " +
-            "ORDER BY b.start DESC")
-    List<Booking> findAllPastBookingByBookerIdOrderByStartDesc(long bookerId);
+            "WHERE b.end < NOW() AND b.booker.id = ?1 ")
+    List<Booking> findAllPastBookingByBookerId(long bookerId, Sort sort);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
-            "WHERE (NOW() BETWEEN b.start AND b.end) AND b.booker.id = ?1 " +
-            "ORDER BY b.start DESC")
-    List<Booking> findAllCurrentBookingByBookerIdOrderByStartDesc(long bookerId);
+            "WHERE (NOW() BETWEEN b.start AND b.end) AND b.booker.id = ?1 ")
+    List<Booking> findAllCurrentBookingByBookerId(long bookerId, Sort sort);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
-            "WHERE b.start > NOW() AND b.booker.id = ?1 " +
-            "ORDER BY b.start DESC")
-    List<Booking> findAllFutureBookingByBookerIdOrderByStartDesc(long bookerId);
+            "WHERE b.start > NOW() AND b.booker.id = ?1 ")
+    List<Booking> findAllFutureBookingByBookerId(long bookerId, Sort sort);
 
-    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long bookerId, BookingStatus status);
+    List<Booking> findAllByBookerIdAndStatus(long bookerId, BookingStatus status, Sort sort);
 
-    List<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId);
-
-    @Query(value = "SELECT b " +
-            "FROM Booking AS b " +
-            "JOIN FETCH b.item " +
-            "JOIN FETCH b.booker " +
-            "WHERE b.end < NOW() AND b.item.owner.id = ?1 " +
-            "ORDER BY b.start DESC")
-    List<Booking> findAllPastBookingByItemOwnerIdOrderByStartDesc(long ownerId);
+    List<Booking> findAllByItemOwnerId(long ownerId, Sort sort);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
-            "WHERE (NOW() BETWEEN b.start AND b.end) AND b.item.owner.id = ?1 " +
-            "ORDER BY b.start DESC")
-    List<Booking> findAllCurrentBookingByItemOwnerIdOrderByStartDesc(long ownerId);
+            "WHERE b.end < NOW() AND b.item.owner.id = ?1 ")
+    List<Booking> findAllPastBookingByItemOwnerId(long ownerId, Sort sort);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
-            "WHERE b.start > NOW() AND b.item.owner.id = ?1 " +
-            "ORDER BY b.start DESC")
-    List<Booking> findAllFutureBookingByItemOwnerIdOrderByStartDesc(long ownerId);
+            "WHERE (NOW() BETWEEN b.start AND b.end) AND b.item.owner.id = ?1 ")
+    List<Booking> findAllCurrentBookingByItemOwnerId(long ownerId, Sort sort);
 
-    List<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(long ownerId, BookingStatus status);
+    @Query(value = "SELECT b " +
+            "FROM Booking AS b " +
+            "JOIN FETCH b.item " +
+            "JOIN FETCH b.booker " +
+            "WHERE b.start > NOW() AND b.item.owner.id = ?1 ")
+    List<Booking> findAllFutureBookingByItemOwnerId(long ownerId, Sort sort);
+
+    List<Booking> findAllByItemOwnerIdAndStatus(long ownerId, BookingStatus status, Sort sort);
 
     @Query(value = "SELECT * " +
             "FROM bookings AS b " +
@@ -119,7 +109,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "FROM bookings AS b " +
             "JOIN items AS i ON b.item_id = i.item_id " +
             "JOIN users AS u ON b.booker_id = u.user_id " +
-            "WHERE (b.end_date_time < :time) AND (b.item_id = :itemId) AND (b.booker_id = :bookerId) AND (b.status = 'APPROVED') ", nativeQuery = true)
+            "WHERE (b.end_date_time < :time) AND (b.item_id = :itemId) AND (b.booker_id = :bookerId) " +
+            "AND (b.status = 'APPROVED') ", nativeQuery = true)
     long countAllPastForItemByTime(long itemId, long bookerId, LocalDateTime time);
 
+    @Query(value = "SELECT COUNT(b.booking_id) " +
+            "FROM bookings AS b " +
+            "JOIN items AS i ON b.item_id = i.item_id " +
+            "JOIN users AS u ON b.booker_id = u.user_id " +
+            "WHERE (b.start_date_time BETWEEN :start AND :end OR b.end_date_time BETWEEN :start AND :end) " +
+            "AND (b.item_id = :itemId) AND (b.status = 'APPROVED')", nativeQuery = true)
+    long countIntersectionInTime(LocalDateTime start, LocalDateTime end, long itemId);
 }

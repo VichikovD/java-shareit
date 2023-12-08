@@ -14,35 +14,21 @@ import java.util.List;
 
 @Component
 public class BookingMapper {
-    public static Booking bookingDtoReceiveToBooking(BookingDtoReceive bookingDtoReceive, User booker, Item item,
+    public static Booking bookingDtoReceiveToBooking(BookingReceiveDto bookingReceiveDto, User booker, Item item,
                                                      BookingStatus bookingStatus) {
         return Booking.builder()
                 .item(item)
                 .booker(booker)
-                .start(Timestamp.valueOf(bookingDtoReceive.getStart()))
-                .end(Timestamp.valueOf(bookingDtoReceive.getEnd()))
+                .start(Timestamp.valueOf(bookingReceiveDto.getStart()))
+                .end(Timestamp.valueOf(bookingReceiveDto.getEnd()))
                 .status(bookingStatus)
                 .build();
     }
 
-    public static BookingDtoItem bookingToBookingDtoItem(Booking booking) {
-        if (booking == null) {
-            return null;
-        }
-        return BookingDtoItem.builder()
+    public static BookingDto bookingToBookingDtoSend(Booking booking) {
+        return BookingDto.builder()
                 .id(booking.getId())
-                .itemId(booking.getItem().getId())
-                .bookerId(booking.getBooker().getId())
-                .start(booking.getStart().toLocalDateTime())
-                .end(booking.getEnd().toLocalDateTime())
-                .status(booking.getStatus())
-                .build();
-    }
-
-    public static BookingDtoSend bookingToBookingDtoSend(Booking booking) {
-        return BookingDtoSend.builder()
-                .id(booking.getId())
-                .item(ItemMapper.createItemDtoFromItem(booking.getItem()))
+                .item(ItemMapper.itemReceiveDtoFromItem(booking.getItem()))
                 .booker(UserMapper.createUserDtoFromUser(booking.getBooker()))
                 .start(booking.getStart().toLocalDateTime())
                 .end(booking.getEnd().toLocalDateTime())
@@ -50,11 +36,11 @@ public class BookingMapper {
                 .build();
     }
 
-    public static List<BookingDtoSend> bookingListToBookingDtoSendList(List<Booking> bookingList) {
-        List<BookingDtoSend> bookingDtoSendList = new ArrayList<>();
+    public static List<BookingDto> bookingListToBookingDtoSendList(List<Booking> bookingList) {
+        List<BookingDto> bookingDtoList = new ArrayList<>();
         for (Booking booking : bookingList) {
-            bookingDtoSendList.add(bookingToBookingDtoSend(booking));
+            bookingDtoList.add(bookingToBookingDtoSend(booking));
         }
-        return bookingDtoSendList;
+        return bookingDtoList;
     }
 }

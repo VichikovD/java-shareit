@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemReceiveDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder
-public class BookingDtoSend {
+public class BookingDto {
     private long id;
 
-    private ItemDto item;
+    private ItemReceiveDto item;
 
     private UserDto booker;
 

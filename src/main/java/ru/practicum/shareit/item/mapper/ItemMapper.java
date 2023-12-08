@@ -1,7 +1,8 @@
 package ru.practicum.shareit.item.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemReceiveDto;
+import ru.practicum.shareit.item.dto.ItemSendDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -10,18 +11,18 @@ import java.util.List;
 
 @Component
 public class ItemMapper {
-    public static Item createItemFromItemDtoAndOwner(ItemDto itemDto, User owner) {
+    public static Item createItemFromItemDtoAndOwner(ItemReceiveDto itemReceiveDto, User owner) {
         return Item.builder()
                 .id(null)
                 .owner(owner)
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .isAvailable(itemDto.getAvailable())
+                .name(itemReceiveDto.getName())
+                .description(itemReceiveDto.getDescription())
+                .isAvailable(itemReceiveDto.getAvailable())
                 .build();
     }
 
-    public static ItemDto createItemDtoFromItem(Item item) {
-        return ItemDto.builder()
+    public static ItemReceiveDto itemReceiveDtoFromItem(Item item) {
+        return ItemReceiveDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
@@ -29,27 +30,45 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemDto> createItemDtoListFromItemList(List<Item> itemList) {
-        List<ItemDto> itemDtoList = new ArrayList<>();
+    public static List<ItemReceiveDto> itemReceiveDtoListFromItemList(List<Item> itemList) {
+        List<ItemReceiveDto> itemReceiveDtoList = new ArrayList<>();
         for (Item item : itemList) {
-            itemDtoList.add(createItemDtoFromItem(item));
+            itemReceiveDtoList.add(itemReceiveDtoFromItem(item));
         }
 
-        return itemDtoList;
+        return itemReceiveDtoList;
     }
 
-    public static void updateItemByItemDtoNotNullFields(ItemDto itemDto, Item item) {
-        String name = itemDto.getName();
+    public static ItemSendDto itemSendDtoFromItem(Item item) {
+        return ItemSendDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getIsAvailable())
+                .build();
+    }
+
+    public static List<ItemSendDto> itemSendDtoListFromItemList(List<Item> itemList) {
+        List<ItemSendDto> itemSendDtoList = new ArrayList<>();
+        for (Item item : itemList) {
+            itemSendDtoList.add(itemSendDtoFromItem(item));
+        }
+
+        return itemSendDtoList;
+    }
+
+    public static void updateItemByItemDtoNotNullFields(ItemReceiveDto itemReceiveDto, Item item) {
+        String name = itemReceiveDto.getName();
         if (name != null) {
             item.setName(name);
         }
 
-        String description = itemDto.getDescription();
+        String description = itemReceiveDto.getDescription();
         if (description != null) {
             item.setDescription(description);
         }
 
-        Boolean available = itemDto.getAvailable();
+        Boolean available = itemReceiveDto.getAvailable();
         if (available != null) {
             item.setIsAvailable(available);
         }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.practicum.shareit.validation.StartBeforeEnd;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -14,7 +15,8 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder
-public class BookingDtoReceive {
+@StartBeforeEnd
+public class BookingReceiveDto {
     @NotNull(message = "ItemId should not be null")
     private long itemId;
 
