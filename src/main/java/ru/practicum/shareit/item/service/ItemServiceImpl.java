@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    ItemRepository itemRepository;
-    UserRepository userRepository;
-    BookingRepository bookingRepository;
-    CommentRepository commentRepository;
+    final ItemRepository itemRepository;
+    final UserRepository userRepository;
+    final BookingRepository bookingRepository;
+    final CommentRepository commentRepository;
 
-    public static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
-    public static final Sort SORT_START_ASC = Sort.by(Sort.Direction.ASC, "start");
+    private static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
+    private static final Sort SORT_START_ASC = Sort.by(Sort.Direction.ASC, "start");
 
 
     @Autowired
@@ -172,21 +172,6 @@ public class ItemServiceImpl implements ItemService {
                     .orElse(null);
             itemSendDto.setNextBooking(ItemSendDto.bookingToBookingDtoItem(nextBooking));
         }
-        /*for (ItemSendDto itemSendDto : itemSendDtoList) {
-            Booking lastBooking = lastBookingList.stream()
-                    .filter(booking -> itemSendDto.getId().equals(booking.getItem().getId()))
-                    .max(Comparator.comparing(Booking::getEnd))
-                    .orElse(null);
-            itemSendDto.setLastBooking(ItemSendDto.bookingToBookingDtoItem(lastBooking));
-        }
-        List<Booking> nextBookingList = bookingRepository.findAllNextForDateTime(itemIdList, LocalDateTime.now());
-        for (ItemSendDto itemSendDto : itemSendDtoList) {
-            Booking nextBooking = nextBookingList.stream()
-                    .filter(booking -> itemSendDto.getId().equals(booking.getItem().getId()))
-                    .min(Comparator.comparing(Booking::getStart))
-                    .orElse(null);
-            itemSendDto.setNextBooking(ItemSendDto.bookingToBookingDtoItem(nextBooking));
-        }*/
     }
 
     private void setAllCommentsToItemSendDto(Collection<ItemSendDto> itemSendDtoList) {

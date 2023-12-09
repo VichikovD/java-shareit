@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +18,8 @@ public class BookingMapper {
         return Booking.builder()
                 .item(item)
                 .booker(booker)
-                .start(Timestamp.valueOf(bookingReceiveDto.getStart()))
-                .end(Timestamp.valueOf(bookingReceiveDto.getEnd()))
+                .start(bookingReceiveDto.getStart())
+                .end(bookingReceiveDto.getEnd())
                 .status(bookingStatus)
                 .build();
     }
@@ -30,8 +29,8 @@ public class BookingMapper {
                 .id(booking.getId())
                 .item(ItemMapper.itemReceiveDtoFromItem(booking.getItem()))
                 .booker(UserMapper.createUserDtoFromUser(booking.getBooker()))
-                .start(booking.getStart().toLocalDateTime())
-                .end(booking.getEnd().toLocalDateTime())
+                .start(booking.getStart())
+                .end(booking.getEnd())
                 .status(booking.getStatus())
                 .build();
     }

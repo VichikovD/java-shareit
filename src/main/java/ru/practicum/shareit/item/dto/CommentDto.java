@@ -16,7 +16,7 @@ import java.util.Objects;
 public class CommentDto {
     Long id;
 
-    @NotBlank(message = "Text of comment should not be empty or null")
+    @NotBlank(message = "Text fromString comment should not be empty or null")
     String text;
 
     String authorName;

@@ -80,8 +80,8 @@ public class ItemSendDto {
                 .id(booking.getId())
                 .itemId(booking.getItem().getId())
                 .bookerId(booking.getBooker().getId())
-                .start(booking.getStart().toLocalDateTime())
-                .end(booking.getEnd().toLocalDateTime())
+                .start(booking.getStart())
+                .end(booking.getEnd())
                 .status(booking.getStatus())
                 .build();
     }

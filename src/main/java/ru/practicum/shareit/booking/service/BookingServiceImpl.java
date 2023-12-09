@@ -10,24 +10,23 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingReceiveDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.state.BookingState;
-import ru.practicum.shareit.exception.LockedException;
-import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.UnsupportedStateException;
+import ru.practicum.shareit.exception.ValidateException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
-    BookingRepository bookingRepository;
-    UserRepository userRepository;
-    ItemRepository itemRepository;
-    public static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
+    final BookingRepository bookingRepository;
+    final UserRepository userRepository;
+    final ItemRepository itemRepository;
+    private static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
 
     public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, ItemRepository itemRepository) {
         this.bookingRepository = bookingRepository;
@@ -48,11 +47,14 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item to be booked not found by id: " + itemId));
         if (!item.getIsAvailable()) {
-            throw new NotAvailableException("Item to be booked is not available");
+            throw new ValidateException("Item to be booked is not available");
         }
+        // Проверка, что из всех approve бронирований ни 1 не пересекается с создаваемым, но т.к. создаются брони со статусом WAITING,
+        // их можно создавать сколько угодно на одинаковые даты кем угодно, а уже владелец решит, кому достанется предмет.
+        // Сделал так, чтобы бронировать предмет мог не первый успевший составить бронь, а каждый
         long countIntersection = bookingRepository.countIntersectionInTime(start, end, itemId);
         if (countIntersection > 0) {
-            throw new NotAvailableException("Item to be booked is already booked in between date " + start + " and " + end);
+            throw new ValidateException("Item to be booked is already booked in between date " + start + " and " + end);
         }
         long ownerId = item.getOwner().getId();
         if (ownerId == bookerId) {
@@ -67,19 +69,23 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDto respondToBooking(long ownerId, long bookingId, boolean approved) {
+        // метод ищет по одному конкретному booking id (Что уже не может вернуть список) и по owner id, чтобы убедиться,
+        // что именно этот юзер владелец итема
         Booking booking = bookingRepository.findByIdAndItemOwnerId(bookingId, ownerId)
                 .orElseThrow(() -> new NotFoundException("Booking with id " + bookingId + " not found for owner with id: " + ownerId));
         long itemId = booking.getItem().getId();
-        LocalDateTime start = booking.getStart().toLocalDateTime();
-        LocalDateTime end = booking.getEnd().toLocalDateTime();
+        LocalDateTime start = booking.getStart();
+        LocalDateTime end = booking.getEnd();
         BookingStatus status = booking.getStatus();
 
-        if (status.equals(BookingStatus.APPROVED)) {
-            throw new LockedException("Status can't be changed. Status locked as \"" + status + "\"");
+        if (!status.equals(BookingStatus.WAITING)) {
+            throw new ValidateException("Status can't be changed. Status locked as \"" + status + "\"");
         }
+        // А тут проверяем, что подтверждение брони не пересечется с уже approved бронью, ведь создавать брони мы можем
+        // сколько угодно, пока на даты нет approved брони
         long countIntersection = bookingRepository.countIntersectionInTime(start, end, itemId);
         if (countIntersection > 0) {
-            throw new NotAvailableException("Item to be booked is already booked in between date " + start + " and " + end);
+            throw new ValidateException("Item to be booked is already booked in between date " + start + " and " + end);
         }
 
         booking.setStatus(BookingStatus.getBookingStatusByBoolean(approved));
@@ -92,15 +98,6 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto findBookingById(long userId, long bookingId) {
         Booking booking = bookingRepository.findByIdAndOwnerIdOrBookerId(bookingId, userId)
                 .orElseThrow(() -> new NotFoundException("Booking with id " + bookingId + " not found for user with id: " + userId));
-        /*Item bookingItem = booking.getItem();
-        long bookerId = booking.getBooker()
-                .getId();
-        long itemOwnerId = bookingItem.getOwner()
-                .getId();
-        long itemId = bookingItem.getId();
-        if (itemOwnerId != userId && bookerId != userId) {
-            throw new LockedException(String.format("User with id %d is not owner or booker of item with id %d", userId, itemId));
-        }*/
 
         return BookingMapper.bookingToBookingDtoSend(booking);
     }
@@ -131,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = bookingRepository.findAllByBookerIdAndStatus(bookerId, BookingStatus.REJECTED, SORT_START_DESC);
                 break;
             default:
-                throw new UnsupportedStateException("Unknown state: " + state);
+                bookingList = new ArrayList<>();
         }
         return BookingMapper.bookingListToBookingDtoSendList(bookingList);
     }
@@ -163,7 +160,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = bookingRepository.findAllByItemOwnerIdAndStatus(ownerId, BookingStatus.REJECTED, SORT_START_DESC);
                 break;
             default:
-                throw new UnsupportedStateException("Unknown state: " + state);
+                bookingList = new ArrayList<>();
         }
         return BookingMapper.bookingListToBookingDtoSendList(bookingList);
     }

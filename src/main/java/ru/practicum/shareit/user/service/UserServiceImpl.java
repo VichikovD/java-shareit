@@ -12,13 +12,10 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    UserRepository userRepository;
-    UserMapper userMapper;
+    final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
     }
 
     @Transactional

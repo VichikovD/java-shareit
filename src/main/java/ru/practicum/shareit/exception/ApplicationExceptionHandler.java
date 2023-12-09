@@ -34,14 +34,6 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUnsupportedStateException(UnsupportedStateException e) {
-        String errorMessage = e.getMessage();
-        log.error("Unsupported state Exception = {}", errorMessage);
-        return new ErrorResponse(e.getMessage(), e.toString());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidateException(MethodArgumentNotValidException e) {
         String errorMessage = e.getMessage();
         log.error("Method Argument Not Valid Exception = {}", errorMessage);
@@ -53,7 +45,7 @@ public class ApplicationExceptionHandler {
     public ErrorResponse handleBookingStateConvertingException(MethodArgumentTypeMismatchException e) {
         String errorMessage = e.getMessage();
         log.error("Method Argument Type Mismatch Exception = {}", errorMessage);
-        return new ErrorResponse("Unknown state: " + e.getValue(), e.getMessage());
+        return new ErrorResponse(e.getCause().getCause().getMessage(), e.getMessage());
     }
 
     @ExceptionHandler

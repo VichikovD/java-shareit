@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,10 +31,10 @@ public class Booking {
     private User booker;
 
     @Column(name = "start_date_time")
-    private Timestamp start;
+    private LocalDateTime start;
 
     @Column(name = "end_date_time")
-    private Timestamp end;
+    private LocalDateTime end;
 
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
