@@ -7,18 +7,14 @@ import ru.practicum.shareit.validation.NotEmptyIfNotNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
-/**
- * TODO Sprint add-controllers.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder
-public class ItemDto {
+public class ItemReceiveDto {
     private Long id;
 
     @NotBlank(groups = OnCreate.class, message = "Item name should not be empty")
@@ -31,17 +27,5 @@ public class ItemDto {
 
     @NotNull(groups = OnCreate.class, message = "Item available status should not be empty")
     private Boolean available;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemDto itemDto = (ItemDto) o;
-        return Objects.equals(id, itemDto.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
+

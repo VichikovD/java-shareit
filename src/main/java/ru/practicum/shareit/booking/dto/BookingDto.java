@@ -1,7 +1,28 @@
 package ru.practicum.shareit.booking.dto;
 
-/**
- * TODO Sprint add-bookings.
- */
+import lombok.*;
+import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.item.dto.ItemReceiveDto;
+import ru.practicum.shareit.user.dto.UserDto;
+
+import java.time.LocalDateTime;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
 public class BookingDto {
+    private long id;
+
+    private ItemReceiveDto item;
+
+    private UserDto booker;
+
+    private LocalDateTime start;
+
+    private LocalDateTime end;
+
+    private BookingStatus status;
 }
