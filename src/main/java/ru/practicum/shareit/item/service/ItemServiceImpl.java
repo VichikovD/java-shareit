@@ -153,7 +153,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<Booking> lastBookingList = bookingRepository.findAllLastForDateTime(itemIdList, LocalDateTime.now());
         Map<Long, List<Booking>> lastBookingMap = lastBookingList.stream()
-                .collect(Collectors.groupingBy((booking -> booking.getItem().getId())));
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
         for (ItemSendDto itemSendDto : itemSendDtoList) {
             List<Booking> lastBookings = lastBookingMap.getOrDefault(itemSendDto.getId(), new ArrayList<>());
             Booking lastBooking = lastBookings.stream()
@@ -181,7 +181,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<Comment> allCommentsList = commentRepository.findAllCommentsInIdList(itemIdList);
         Map<Long, List<Comment>> commentsMap = allCommentsList.stream()
-                .collect(Collectors.groupingBy((comment -> comment.getItem().getId())));
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
         for (ItemSendDto itemSendDto : itemSendDtoList) {
             List<Comment> comments = commentsMap.getOrDefault(itemSendDto.getId(), new ArrayList<>());
             itemSendDto.setComments(CommentMapper.toCommentDtoList(comments));

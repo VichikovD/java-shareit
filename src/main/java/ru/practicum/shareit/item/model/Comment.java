@@ -31,7 +31,7 @@ public class Comment {
     @JoinColumn(name = "item_id")
     Item item;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     User author;
 

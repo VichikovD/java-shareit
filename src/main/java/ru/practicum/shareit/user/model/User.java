@@ -28,10 +28,6 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "owner")
-    private Set<Item> items;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
