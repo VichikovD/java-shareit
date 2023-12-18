@@ -1,12 +1,9 @@
 package ru.practicum.shareit.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
