@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import org.springframework.data.domain.Page;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemReceiveDto;
 import ru.practicum.shareit.item.dto.ItemSendDto;
@@ -11,11 +12,11 @@ public interface ItemService {
 
     ItemSendDto update(ItemReceiveDto item, long userId);
 
-    List<ItemSendDto> getByOwnerId(long userId);
+    List<ItemSendDto> getByOwnerId(long userId, int limit, int offset);
 
     ItemSendDto getByItemId(long itemId, long userId);
 
-    List<ItemSendDto> search(String text);
+    List<ItemSendDto> search(String text, int limit, int offset);
 
     void deleteByItemId(long itemId, long ownerId);
 

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,55 +22,55 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE b.id = ?1 AND (b.item.owner.id = ?2 OR b.booker.id = ?2)")
     Optional<Booking> findByIdAndOwnerIdOrBookerId(long bookingId, long bookerId);
 
-    List<Booking> findAllByBookerId(long bookerId, Sort sort);
+    List<Booking> findAllByBookerId(long bookerId, PageRequest pageRequest);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
             "WHERE b.end < NOW() AND b.booker.id = ?1 ")
-    List<Booking> findAllPastBookingByBookerId(long bookerId, Sort sort);
+    List<Booking> findAllPastBookingByBookerId(long bookerId, PageRequest pageRequest);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
             "WHERE (NOW() BETWEEN b.start AND b.end) AND b.booker.id = ?1 ")
-    List<Booking> findAllCurrentBookingByBookerId(long bookerId, Sort sort);
+    List<Booking> findAllCurrentBookingByBookerId(long bookerId, PageRequest pageRequest);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
             "WHERE b.start > NOW() AND b.booker.id = ?1 ")
-    List<Booking> findAllFutureBookingByBookerId(long bookerId, Sort sort);
+    List<Booking> findAllFutureBookingByBookerId(long bookerId, PageRequest pageRequest);
 
-    List<Booking> findAllByBookerIdAndStatus(long bookerId, BookingStatus status, Sort sort);
+    List<Booking> findAllByBookerIdAndStatus(long bookerId, BookingStatus status, PageRequest pageRequest);
 
-    List<Booking> findAllByItemOwnerId(long ownerId, Sort sort);
+    List<Booking> findAllByItemOwnerId(long ownerId, PageRequest pageRequest);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
             "WHERE b.end < NOW() AND b.item.owner.id = ?1 ")
-    List<Booking> findAllPastBookingByItemOwnerId(long ownerId, Sort sort);
+    List<Booking> findAllPastBookingByItemOwnerId(long ownerId, PageRequest pageRequest);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
             "WHERE (NOW() BETWEEN b.start AND b.end) AND b.item.owner.id = ?1 ")
-    List<Booking> findAllCurrentBookingByItemOwnerId(long ownerId, Sort sort);
+    List<Booking> findAllCurrentBookingByItemOwnerId(long ownerId, PageRequest pageRequest);
 
     @Query(value = "SELECT b " +
             "FROM Booking AS b " +
             "JOIN FETCH b.item " +
             "JOIN FETCH b.booker " +
             "WHERE b.start > NOW() AND b.item.owner.id = ?1 ")
-    List<Booking> findAllFutureBookingByItemOwnerId(long ownerId, Sort sort);
+    List<Booking> findAllFutureBookingByItemOwnerId(long ownerId, PageRequest pageRequest);
 
-    List<Booking> findAllByItemOwnerIdAndStatus(long ownerId, BookingStatus status, Sort sort);
+    List<Booking> findAllByItemOwnerIdAndStatus(long ownerId, BookingStatus status, PageRequest pageRequest);
 
     @Query(value = "SELECT * " +
             "FROM bookings AS b " +

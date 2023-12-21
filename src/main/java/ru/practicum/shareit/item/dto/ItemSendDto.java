@@ -22,16 +22,13 @@ import java.util.Objects;
 public class ItemSendDto {
     private Long id;
 
-    @NotBlank(groups = OnCreate.class, message = "Item name should not be empty")
-    @NotEmptyIfNotNull(groups = OnUpdate.class, message = "Item name should not be empty")
     private String name;
 
-    @NotBlank(groups = OnCreate.class, message = "Item description should not be empty")
-    @NotEmptyIfNotNull(groups = OnUpdate.class, message = "Item description should not be empty")
     private String description;
 
-    @NotNull(groups = OnCreate.class, message = "Item available status should not be empty")
     private Boolean available;
+
+    private Long requestId;
 
     private BookingDtoItem lastBooking;
 

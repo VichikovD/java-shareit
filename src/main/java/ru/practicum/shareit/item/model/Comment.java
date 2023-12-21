@@ -27,7 +27,7 @@ public class Comment {
     @Column(name = "created")
     Timestamp creationDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     Item item;
 

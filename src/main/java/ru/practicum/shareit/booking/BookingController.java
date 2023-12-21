@@ -8,11 +8,13 @@ import ru.practicum.shareit.booking.dto.BookingReceiveDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.state.BookingState;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
 @Slf4j
+@Validated
 public class BookingController {
     BookingService bookingService;
 
@@ -51,18 +53,22 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> findAllBookingByBookerIdAndState(@RequestParam(defaultValue = "ALL") BookingState state,
-                                                             @RequestHeader("X-Sharer-User-Id") long userId) {
-        log.info("POST \"/bookings?state={}\", Headers:(X-Sharer-User-Id)={}", state, userId);
-        List<BookingDto> bookingDtoList = bookingService.findAllBookingByBookerIdAndState(userId, state);
+                                                             @RequestHeader("X-Sharer-User-Id") long userId,
+                                                             @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
+                                                             @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
+        log.info("POST \"/bookings?state={}&from={}&size={}\", Headers:(X-Sharer-User-Id)={}", state, offset, limit, userId);
+        List<BookingDto> bookingDtoList = bookingService.findAllBookingByBookerIdAndState(userId, state, limit, offset);
         log.info(bookingDtoList.toString());
         return bookingDtoList;
     }
 
     @GetMapping("/owner")
     public List<BookingDto> findAllBookingByOwnerIdAndState(@RequestParam(defaultValue = "ALL") BookingState state,
-                                                            @RequestHeader("X-Sharer-User-Id") long userId) {
+                                                            @RequestHeader("X-Sharer-User-Id") long userId,
+                                                            @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
+                                                            @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
         log.info("POST \"/bookings/owner?state={}\", Headers:(X-Sharer-User-Id)={}", state, userId);
-        List<BookingDto> bookingDtoList = bookingService.findAllBookingByOwnerIdAndState(userId, state);
+        List<BookingDto> bookingDtoList = bookingService.findAllBookingByOwnerIdAndState(userId, state, limit, offset);
         log.info(bookingDtoList.toString());
         return bookingDtoList;
     }

@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -30,18 +35,19 @@ public class ItemServiceImpl implements ItemService {
     final UserRepository userRepository;
     final BookingRepository bookingRepository;
     final CommentRepository commentRepository;
-
+    final ItemRequestRepository itemRequestRepository;
     private static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
     private static final Sort SORT_START_ASC = Sort.by(Sort.Direction.ASC, "start");
 
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository,
-                           CommentRepository commentRepository) {
+                           CommentRepository commentRepository, ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Transactional
@@ -50,7 +56,15 @@ public class ItemServiceImpl implements ItemService {
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("User not found by Id " + ownerId));
 
-        Item itemToCreate = ItemMapper.createItemFromItemDtoAndOwner(itemReceiveDto, owner);
+        ItemRequest itemRequest = null;
+        Long itemRequestId = itemReceiveDto.getRequestId();
+        if (itemRequestId != null) {
+            itemRequest = itemRequestRepository.findById(itemRequestId)
+                    .orElseThrow(() -> new NotFoundException("ItemRequest not found by Id " + itemRequestId));
+        }
+
+        Item itemToCreate = ItemMapper.createItemFromItemDtoAndOwnerAndItemReceive(itemReceiveDto, owner, itemRequest);
+
         Item returnedItem = itemRepository.save(itemToCreate);
         return ItemMapper.itemSendDtoFromItem(returnedItem);
     }
@@ -74,9 +88,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemSendDto> getByOwnerId(long userId) {
-        Sort sortById = Sort.by(Sort.Direction.ASC, "id");
-        List<Item> itemList = itemRepository.findAllByOwnerId(userId, sortById);
+    public List<ItemSendDto> getByOwnerId(long userId, int limit, int offset) {
+        PageRequest pageRequest = getPageRequest(Sort.Direction.ASC, "id", limit, offset);
+        List<Item> itemList = itemRepository.findAllByOwnerId(userId, pageRequest);
         List<ItemSendDto> itemSendDtoList = ItemMapper.itemSendDtoListFromItemList(itemList);
 
         setAllLastAndNextBookingToItemDto(itemSendDtoList);
@@ -100,12 +114,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemSendDto> search(String text) {
+    public List<ItemSendDto> search(String text, int limit, int offset) {
+        PageRequest pageRequest = getPageRequest(Sort.Direction.ASC, "id", limit, offset);
         String correctText = text.toLowerCase();
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        List<Item> itemList = itemRepository.searchAvailableByNameOrDescription(correctText);
+        List<Item> itemList = itemRepository.searchAvailableByNameOrDescription(correctText, pageRequest);
         return ItemMapper.itemSendDtoListFromItemList(itemList);
     }
 
@@ -127,6 +142,12 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = CommentMapper.fromCommentDto(commentDto, item, user);
         Comment commentToReturn = commentRepository.save(comment);
         return CommentMapper.toCommentDto(commentToReturn);
+    }
+
+    private PageRequest getPageRequest(Sort.Direction direction, String sortParam, int limit, int offset) {
+        Sort sort = Sort.by(direction, sortParam);
+        // Данное решение из "советы ментора", но для соответствия тз я бы делал через нативные запросы + order, limit, offset
+        return PageRequest.of((offset / limit), limit, sort);
     }
 
     private void setLastAndNextBookingToItemDto(ItemSendDto itemSendDto) {

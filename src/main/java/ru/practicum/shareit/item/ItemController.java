@@ -11,10 +11,12 @@ import ru.practicum.shareit.item.dto.ItemReceiveDto;
 import ru.practicum.shareit.item.dto.ItemSendDto;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
 @Slf4j
+@Validated
 @RequestMapping("/items")
 public class ItemController {
     ItemService itemService;
@@ -45,9 +47,11 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemSendDto> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId) {
-        log.info("GET \"/items\" , Headers:(X-Sharer-User-Id)={}", userId);
-        List<ItemSendDto> listToReturn = itemService.getByOwnerId(userId);
+    public List<ItemSendDto> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
+                                          @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
+        log.info("GET \"/items?from={}&size={}\" , Headers:(X-Sharer-User-Id)={}", offset, limit, userId);
+        List<ItemSendDto> listToReturn = itemService.getByOwnerId(userId, limit, offset);
         log.debug(listToReturn.toString());
         return listToReturn;
     }
@@ -62,10 +66,12 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemSendDto> getViaSubstringSearch(@RequestParam String text,
-                                                   @RequestHeader("X-Sharer-User-Id") long userId) {
-        log.info("GET \"/items/search?text=" + text + "\" , Headers:(X-Sharer-User-Id)={}", userId);
-        List<ItemSendDto> itemReturn = itemService.search(text);
+    public List<ItemSendDto> search(@RequestParam String text,
+                                    @RequestHeader("X-Sharer-User-Id") long userId,
+                                    @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
+                                    @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
+        log.info("GET \"/items/search?text={}&from={}&size={}\" , Headers:(X-Sharer-User-Id)={}", text, limit, offset, userId);
+        List<ItemSendDto> itemReturn = itemService.search(text, limit, offset);
         log.debug(itemReturn.toString());
         return itemReturn;
     }

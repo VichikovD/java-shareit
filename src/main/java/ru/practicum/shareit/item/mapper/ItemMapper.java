@@ -4,20 +4,24 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemReceiveDto;
 import ru.practicum.shareit.item.dto.ItemSendDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Component
 public class ItemMapper {
-    public static Item createItemFromItemDtoAndOwner(ItemReceiveDto itemReceiveDto, User owner) {
+    public static Item createItemFromItemDtoAndOwnerAndItemReceive(ItemReceiveDto itemReceiveDto, User owner, ItemRequest itemRequest) {
         return Item.builder()
                 .id(null)
                 .owner(owner)
                 .name(itemReceiveDto.getName())
                 .description(itemReceiveDto.getDescription())
                 .isAvailable(itemReceiveDto.getAvailable())
+                .itemRequest(itemRequest)
                 .build();
     }
 
@@ -30,25 +34,22 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemReceiveDto> itemReceiveDtoListFromItemList(List<Item> itemList) {
-        List<ItemReceiveDto> itemReceiveDtoList = new ArrayList<>();
-        for (Item item : itemList) {
-            itemReceiveDtoList.add(itemReceiveDtoFromItem(item));
-        }
-
-        return itemReceiveDtoList;
-    }
-
     public static ItemSendDto itemSendDtoFromItem(Item item) {
+        Long itemRequestId = null;
+        ItemRequest itemRequest = item.getItemRequest();
+        if(itemRequest != null){
+            itemRequestId = itemRequest.getId();
+        }
         return ItemSendDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
+                .requestId(itemRequestId)
                 .build();
     }
 
-    public static List<ItemSendDto> itemSendDtoListFromItemList(List<Item> itemList) {
+    public static List<ItemSendDto> itemSendDtoListFromItemList(Collection<Item> itemList) {
         List<ItemSendDto> itemSendDtoList = new ArrayList<>();
         for (Item item : itemList) {
             itemSendDtoList.add(itemSendDtoFromItem(item));

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 public class BookingMapper {
-    public static Booking bookingDtoReceiveToBooking(BookingReceiveDto bookingReceiveDto, User booker, Item item,
+    public static Booking bookingReceiveDtoToBooking(BookingReceiveDto bookingReceiveDto, User booker, Item item,
                                                      BookingStatus bookingStatus) {
         return Booking.builder()
                 .item(item)
@@ -24,10 +24,10 @@ public class BookingMapper {
                 .build();
     }
 
-    public static BookingDto bookingToBookingDtoSend(Booking booking) {
+    public static BookingDto bookingToBookingSendDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
-                .item(ItemMapper.itemReceiveDtoFromItem(booking.getItem()))
+                .item(ItemMapper.itemSendDtoFromItem(booking.getItem()))
                 .booker(UserMapper.createUserDtoFromUser(booking.getBooker()))
                 .start(booking.getStart())
                 .end(booking.getEnd())
@@ -35,10 +35,10 @@ public class BookingMapper {
                 .build();
     }
 
-    public static List<BookingDto> bookingListToBookingDtoSendList(List<Booking> bookingList) {
+    public static List<BookingDto> bookingListToBookingSendDtoList(List<Booking> bookingList) {
         List<BookingDto> bookingDtoList = new ArrayList<>();
         for (Booking booking : bookingList) {
-            bookingDtoList.add(bookingToBookingDtoSend(booking));
+            bookingDtoList.add(bookingToBookingSendDto(booking));
         }
         return bookingDtoList;
     }
