@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         String email = userDto.getEmail();
 
         User userToUpdate = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found by Id " + userId));
+                .orElseThrow(() -> new NotFoundException("User not found by id: " + userId));
 
         UserMapper.updateUserByUserDtoNotNullFields(userDto, userToUpdate);
         userRepository.save(userToUpdate);
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found by Id " + id));
+                .orElseThrow(() -> new NotFoundException("User not found by id: " + id));
         return UserMapper.createUserDtoFromUser(user);
     }
 }

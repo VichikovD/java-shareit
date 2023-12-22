@@ -54,13 +54,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemSendDto create(ItemReceiveDto itemReceiveDto, long ownerId) {
         User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new NotFoundException("User not found by Id " + ownerId));
+                .orElseThrow(() -> new NotFoundException("User not found by id: " + ownerId));
 
         ItemRequest itemRequest = null;
         Long itemRequestId = itemReceiveDto.getRequestId();
         if (itemRequestId != null) {
             itemRequest = itemRequestRepository.findById(itemRequestId)
-                    .orElseThrow(() -> new NotFoundException("ItemRequest not found by Id " + itemRequestId));
+                    .orElseThrow(() -> new NotFoundException("ItemRequest not found by id: " + itemRequestId));
         }
 
         Item itemToCreate = ItemMapper.createItemFromItemDtoAndOwnerAndItemReceive(itemReceiveDto, owner, itemRequest);
@@ -79,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + ownerId));
         // Check if repository has owner with same id who has same item
         Item item = itemRepository.findByIdAndOwnerId(itemId, ownerId)
-                .orElseThrow(() -> new NotFoundException("User with id " + ownerId + " doesn't have item with id " + itemId));
+                .orElseThrow(() -> new NotFoundException("User with id: " + ownerId + " doesn't have item with id " + itemId));
 
         ItemMapper.updateItemByItemDtoNotNullFields(itemReceiveDto, item);
         itemRepository.save(item);
@@ -102,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemSendDto getByItemId(long itemId, long userId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Item not found by Id " + itemId));
+                .orElseThrow(() -> new NotFoundException("Item not found by id " + itemId));
 
         ItemSendDto itemSendDto = ItemMapper.itemSendDtoFromItem(item);
         if (item.getOwner().getId() == userId) {
@@ -116,10 +116,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemSendDto> search(String text, int limit, int offset) {
         PageRequest pageRequest = getPageRequest(Sort.Direction.ASC, "id", limit, offset);
-        String correctText = text.toLowerCase();
-        if (text.isBlank()) {
+        if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
+        String correctText = text.toLowerCase();
         List<Item> itemList = itemRepository.searchAvailableByNameOrDescription(correctText, pageRequest);
         return ItemMapper.itemSendDtoListFromItemList(itemList);
     }
