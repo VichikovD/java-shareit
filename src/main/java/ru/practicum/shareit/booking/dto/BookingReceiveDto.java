@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder
+@EqualsAndHashCode
 @StartBeforeEnd
 public class BookingReceiveDto {
     @NotNull(message = "ItemId should not be null")

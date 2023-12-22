@@ -6,7 +6,8 @@ import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 public class ItemRequestReceiveDto {
     @NotBlank(message = "ItemRequest's description should not be empty or null")

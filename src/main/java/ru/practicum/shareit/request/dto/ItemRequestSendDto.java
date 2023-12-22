@@ -5,11 +5,11 @@ import ru.practicum.shareit.item.dto.ItemSendDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 @Builder
 public class ItemRequestSendDto {

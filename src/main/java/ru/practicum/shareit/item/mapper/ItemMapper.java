@@ -5,7 +5,6 @@ import ru.practicum.shareit.item.dto.ItemReceiveDto;
 import ru.practicum.shareit.item.dto.ItemSendDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class ItemMapper {
     public static ItemSendDto itemSendDtoFromItem(Item item) {
         Long itemRequestId = null;
         ItemRequest itemRequest = item.getItemRequest();
-        if(itemRequest != null){
+        if (itemRequest != null) {
             itemRequestId = itemRequest.getId();
         }
         return ItemSendDto.builder()

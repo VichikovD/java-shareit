@@ -27,7 +27,6 @@ public class BookingServiceImpl implements BookingService {
     final BookingRepository bookingRepository;
     final UserRepository userRepository;
     final ItemRepository itemRepository;
-    private static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
 
     public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, ItemRepository itemRepository) {
         this.bookingRepository = bookingRepository;
@@ -44,7 +43,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime end = bookingReceiveDto.getEnd();
 
         User booker = userRepository.findById(bookerId)
-                .orElseThrow(() -> new NotFoundException("Booking user not found by id " + bookerId));
+                .orElseThrow(() -> new NotFoundException("Booking user not found by id: " + bookerId));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item to be booked not found by id: " + itemId));
         if (!item.getIsAvailable()) {
@@ -53,7 +52,7 @@ public class BookingServiceImpl implements BookingService {
         // Проверка, что из всех approve бронирований ни 1 не пересекается с создаваемым, но т.к. создаются брони со статусом WAITING,
         // их можно создавать сколько угодно на одинаковые даты кем угодно, а уже владелец решит, кому достанется предмет.
         // Сделал так, чтобы бронировать предмет мог не первый успевший составить бронь, а каждый
-        long countIntersection = bookingRepository.countIntersectionInTime(start, end, itemId);
+        int countIntersection = bookingRepository.countIntersectionInTime(start, end, itemId);
         if (countIntersection > 0) {
             throw new ValidateException("Item to be booked is already booked in between date " + start + " and " + end);
         }
@@ -107,7 +106,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookingByBookerIdAndState(long bookerId, BookingState state, int limit, int offset) {
         userRepository.findById(bookerId)
-                .orElseThrow(() -> new NotFoundException("Booking user not found by id " + bookerId));
+                .orElseThrow(() -> new NotFoundException("Booking user not found by id: " + bookerId));
         PageRequest pageRequest = getPageRequest(Sort.Direction.DESC, "start", limit, offset);
         List<Booking> bookingList;
         switch (state) {
@@ -139,7 +138,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookingByOwnerIdAndState(long ownerId, BookingState state, int limit, int offset) {
         userRepository.findById(ownerId)
-                .orElseThrow(() -> new NotFoundException("Owner user not found by id " + ownerId));
+                .orElseThrow(() -> new NotFoundException("Owner user not found by id: " + ownerId));
         PageRequest pageRequest = getPageRequest(Sort.Direction.DESC, "start", limit, offset);
         List<Booking> bookingList;
         switch (state) {

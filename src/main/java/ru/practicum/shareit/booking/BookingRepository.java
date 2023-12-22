@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
@@ -120,5 +119,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN users AS u ON b.booker_id = u.user_id " +
             "WHERE (b.start_date_time < :end AND b.end_date_time > :start) " +
             "AND (b.item_id = :itemId) AND (b.status = 'APPROVED')", nativeQuery = true)
-    long countIntersectionInTime(LocalDateTime start, LocalDateTime end, long itemId);
+    int countIntersectionInTime(LocalDateTime start, LocalDateTime end, long itemId);
 }

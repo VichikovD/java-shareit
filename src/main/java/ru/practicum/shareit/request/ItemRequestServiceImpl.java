@@ -91,7 +91,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .stream()
                 .collect(Collectors.groupingBy((item) -> item.getItemRequest().id));
 
-        for(ItemRequestSendDto requestSendDto : itemRequestSendDtoCollection){
+        for (ItemRequestSendDto requestSendDto : itemRequestSendDtoCollection) {
             List<ItemSendDto> responses = ItemMapper.itemSendDtoListFromItemList(
                     requestIdToItemListMap.getOrDefault(requestSendDto.getId(), new ArrayList<>()));
             requestSendDto.setItems(responses);
