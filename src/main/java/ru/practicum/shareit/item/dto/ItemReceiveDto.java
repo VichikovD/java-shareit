@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 @Builder
+@EqualsAndHashCode
 public class ItemReceiveDto {
     private Long id;
 

@@ -56,7 +56,7 @@ public class BookingController {
                                                              @RequestHeader("X-Sharer-User-Id") long userId,
                                                              @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
                                                              @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
-        log.info("POST \"/bookings?state={}&from={}&size={}\", Headers:(X-Sharer-User-Id)={}", state, offset, limit, userId);
+        log.info("GET \"/bookings?state={}&from={}&size={}\", Headers:(X-Sharer-User-Id)={}", state, offset, limit, userId);
         List<BookingDto> bookingDtoList = bookingService.findAllBookingByBookerIdAndState(userId, state, limit, offset);
         log.info(bookingDtoList.toString());
         return bookingDtoList;
@@ -67,7 +67,7 @@ public class BookingController {
                                                             @RequestHeader("X-Sharer-User-Id") long userId,
                                                             @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
                                                             @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
-        log.info("POST \"/bookings/owner?state={}\", Headers:(X-Sharer-User-Id)={}", state, userId);
+        log.info("GET \"/bookings/owner?state={}\", Headers:(X-Sharer-User-Id)={}", state, userId);
         List<BookingDto> bookingDtoList = bookingService.findAllBookingByOwnerIdAndState(userId, state, limit, offset);
         log.info(bookingDtoList.toString());
         return bookingDtoList;

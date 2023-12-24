@@ -21,7 +21,7 @@ public class BookingReceiveDto {
     @NotNull(message = "ItemId should not be null")
     private long itemId;
 
-    private long bookerId;
+    private Long bookerId;
 
     @NotNull(message = "Start date-time should not be null")
     @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")

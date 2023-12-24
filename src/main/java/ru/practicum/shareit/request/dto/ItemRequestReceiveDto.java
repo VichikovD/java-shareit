@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 public class ItemRequestReceiveDto {
     @NotBlank(message = "ItemRequest's description should not be empty or null")
     private String description;
