@@ -26,14 +26,6 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleLockedException(LockedException e) {
-        String errorMessage = e.getMessage();
-        log.error("Locked Exception = {}", errorMessage);
-        return new ErrorResponse("LockedException", errorMessage);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidateException(MethodArgumentNotValidException e) {
         String errorMessage = e.getMessage();
         log.error("Method Argument Not Valid Exception = {}", errorMessage);
@@ -78,14 +70,6 @@ public class ApplicationExceptionHandler {
         String errorMessage = e.getMessage();
         log.error("Validate Exception = {}", errorMessage);
         return new ErrorResponse("ValidateException", errorMessage);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleAlreadyExistsException(AlreadyExistsException e) {
-        String errorMessage = e.getMessage();
-        log.error("Already Exists Exception = {}", errorMessage);
-        return new ErrorResponse("AlreadyExistsException", errorMessage);
     }
 
     @ExceptionHandler

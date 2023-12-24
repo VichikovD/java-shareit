@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = BookingController.class)
 class BookingControllerTest {
@@ -97,6 +98,20 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$.status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));
+    }
+
+    @Test
+    void findAllBookingByBookerIdAndState_whenUnknownState_thenException() throws Exception {
+        mvc.perform(get("/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1L)
+                        .param("state", "UNKNOWN")
+                        .param("size", "1")
+                        .param("from", "1")
+                )
+                .andExpect(status().is(400));
     }
 
     @Test
