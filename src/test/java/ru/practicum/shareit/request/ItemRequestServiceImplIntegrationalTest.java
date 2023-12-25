@@ -43,8 +43,8 @@ class ItemRequestServiceImplIntegrationalTest {
         UserDto requester = userService.create(requestingUser);
         ItemRequestReceiveDto requestReceiveDto1 = new ItemRequestReceiveDto("itemRequest1");
         ItemRequestReceiveDto requestReceiveDto2 = new ItemRequestReceiveDto("itemRequest2");
-        ItemRequestSendDto itemRequestSendDto1 = itemRequestService.create(requestReceiveDto1, 2L);
-        ItemRequestSendDto itemRequestSendDto2 = itemRequestService.create(requestReceiveDto2, 2L);
+        ItemRequestSendDto itemRequestSendDto1 = itemRequestService.create(requestReceiveDto1, 1L);
+        ItemRequestSendDto itemRequestSendDto2 = itemRequestService.create(requestReceiveDto2, 1L);
         UserDto owner = UserDto.builder()
                 .name("userName")
                 .email("user@email.com")
@@ -56,10 +56,10 @@ class ItemRequestServiceImplIntegrationalTest {
                 .available(true)
                 .requestId(1L)
                 .build();
-        itemService.create(itemReceiveDto, 3L);
-        itemService.create(itemReceiveDto, 3L);
+        itemService.create(itemReceiveDto, 2L);
+        itemService.create(itemReceiveDto, 2L);
 
-        List<ItemRequestSendDto> itemRequestSendDtoList = itemRequestService.getAllWithOffsetAndLimit(3L, 1L, 1L);
+        List<ItemRequestSendDto> itemRequestSendDtoList = itemRequestService.getAllWithOffsetAndLimit(2L, 1L, 1L);
 
         assertThat(itemRequestSendDtoList.size(), is(1));
         assertThat(itemRequestSendDtoList.get(0).getId(), is(1L));
