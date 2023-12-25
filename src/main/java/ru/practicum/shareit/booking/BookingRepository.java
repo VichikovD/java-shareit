@@ -102,7 +102,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN items AS i ON b.item_id = i.item_id " +
             "JOIN users AS u ON b.booker_id = u.user_id " +
             "WHERE (b.start_date_time > ?2) AND (b.item_id IN ?1) AND (b.status = 'APPROVED') " +
-            "ORDER BY b.start_date_time ASC", nativeQuery = true)
+            "ORDER BY b.start_date_time DESC", nativeQuery = true)
     List<Booking> findAllNextForDateTime(Collection<Long> itemIdList, LocalDateTime time);
 
     @Query(value = "SELECT COUNT(b.booking_id) " +
