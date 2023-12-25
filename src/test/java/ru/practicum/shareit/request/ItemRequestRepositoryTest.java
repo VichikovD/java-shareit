@@ -35,7 +35,6 @@ class ItemRequestRepositoryTest {
                 .build();
         entityManager.persist(requestingUser);
 
-        requestingUser.setId(1L);
         ItemRequest itemRequest1 = ItemRequest.builder()
                 .id(null)
                 .requestingUser(requestingUser)
