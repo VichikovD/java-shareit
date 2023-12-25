@@ -78,8 +78,7 @@ public class ApplicationExceptionHandler {
         StringWriter stringWriter = new StringWriter();
         e.printStackTrace(new PrintWriter(stringWriter));
         String errorMessage = e.getMessage();
-        String stackTrace = stringWriter.toString();
         log.error("Exception = {}", errorMessage, e);
-        return new ErrorResponse(e.toString(), errorMessage, stackTrace);
+        return new ErrorResponse(e.toString(), errorMessage);
     }
 }
