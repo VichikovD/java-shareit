@@ -60,7 +60,6 @@ class ItemRequestRepositoryTest {
         entityManager.persist(itemRequest3);
     }
 
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void getAllWithOffsetAndLimit() {
         int offset = 1;
