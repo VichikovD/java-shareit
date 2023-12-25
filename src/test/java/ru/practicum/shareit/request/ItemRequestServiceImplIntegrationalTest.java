@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemReceiveDto;
-import ru.practicum.shareit.item.dto.ItemSendDto;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
 import ru.practicum.shareit.request.dto.ItemRequestSendDto;
