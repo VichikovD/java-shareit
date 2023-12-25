@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class CommentRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
@@ -85,6 +85,7 @@ class CommentRepositoryTest {
         entityManager.persist(comment1);
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void findAllCommentsInIdList() {
         List<Long> commentIdList = List.of(1L, 3L);

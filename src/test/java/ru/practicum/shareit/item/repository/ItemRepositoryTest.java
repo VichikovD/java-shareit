@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class ItemRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
@@ -30,6 +30,7 @@ class ItemRepositoryTest {
     public void beforeEach() {
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void searchAvailableByNameOrDescription_whenNoCoincided_thenReturnEmptyList() {
         User owner = User.builder()

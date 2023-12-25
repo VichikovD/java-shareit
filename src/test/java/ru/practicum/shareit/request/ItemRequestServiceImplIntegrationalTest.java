@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemReceiveDto;
+import ru.practicum.shareit.item.dto.ItemSendDto;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
 import ru.practicum.shareit.request.dto.ItemRequestSendDto;
@@ -21,6 +23,7 @@ import static org.hamcrest.Matchers.is;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ItemRequestServiceImplIntegrationalTest {
     @Autowired
     ItemRequestServiceImpl itemRequestService;
@@ -31,17 +34,18 @@ class ItemRequestServiceImplIntegrationalTest {
     @Autowired
     ItemServiceImpl itemService;
 
+    // For some reason @DirtiesContext doesn't clean context and user created with id 2
     @Test
     void getAllWithOffsetAndLimit_when2RequestsBut1OffsetAnd1Limit_thenReturn1Request() {
         UserDto requestingUser = UserDto.builder()
                 .name("requestingName")
                 .email("requesting@email.com")
                 .build();
-        userService.create(requestingUser);
+        UserDto requester = userService.create(requestingUser);
         ItemRequestReceiveDto requestReceiveDto1 = new ItemRequestReceiveDto("itemRequest1");
         ItemRequestReceiveDto requestReceiveDto2 = new ItemRequestReceiveDto("itemRequest2");
-        itemRequestService.create(requestReceiveDto1, 1L);
-        itemRequestService.create(requestReceiveDto2, 1L);
+        ItemRequestSendDto itemRequestSendDto1 = itemRequestService.create(requestReceiveDto1, 2L);
+        ItemRequestSendDto itemRequestSendDto2 = itemRequestService.create(requestReceiveDto2, 2L);
         UserDto owner = UserDto.builder()
                 .name("userName")
                 .email("user@email.com")
@@ -53,10 +57,10 @@ class ItemRequestServiceImplIntegrationalTest {
                 .available(true)
                 .requestId(1L)
                 .build();
-        itemService.create(itemReceiveDto, 2L);
-        itemService.create(itemReceiveDto, 2L);
+        itemService.create(itemReceiveDto, 3L);
+        itemService.create(itemReceiveDto, 3L);
 
-        List<ItemRequestSendDto> itemRequestSendDtoList = itemRequestService.getAllWithOffsetAndLimit(2L, 1L, 1L);
+        List<ItemRequestSendDto> itemRequestSendDtoList = itemRequestService.getAllWithOffsetAndLimit(3L, 1L, 1L);
 
         assertThat(itemRequestSendDtoList.size(), is(1));
         assertThat(itemRequestSendDtoList.get(0).getId(), is(1L));

@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class ItemRequestRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
@@ -39,7 +39,7 @@ class ItemRequestRepositoryTest {
                 .id(null)
                 .requestingUser(requestingUser)
                 .description("1requestDescription")
-                .created(CREATED)
+                .created(LocalDateTime.now())
                 .build();
         entityManager.persist(itemRequest1);
 
@@ -47,7 +47,7 @@ class ItemRequestRepositoryTest {
                 .id(null)
                 .requestingUser(requestingUser)
                 .description("2requestDescription")
-                .created(CREATED)
+                .created(LocalDateTime.now())
                 .build();
         entityManager.persist(itemRequest2);
 
@@ -55,11 +55,12 @@ class ItemRequestRepositoryTest {
                 .id(null)
                 .requestingUser(requestingUser)
                 .description("3requestDescription")
-                .created(CREATED)
+                .created(LocalDateTime.now())
                 .build();
         entityManager.persist(itemRequest3);
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void getAllWithOffsetAndLimit() {
         int offset = 1;
