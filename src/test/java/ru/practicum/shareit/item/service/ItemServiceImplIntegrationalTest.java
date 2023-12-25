@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.is;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class ItemServiceImplIntegrationalTest {
     @Autowired
     ItemServiceImpl itemService;
