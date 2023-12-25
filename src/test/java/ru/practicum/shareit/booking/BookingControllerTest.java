@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingReceiveDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.state.BookingState;
+import ru.practicum.shareit.exception.ValidateException;
 import ru.practicum.shareit.item.dto.ItemSendDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -47,7 +48,8 @@ class BookingControllerTest {
         Mockito.when(bookingService.create(itemToSave))
                 .thenReturn(bookingReturned);
 
-        mvc.perform(post("/bookings").content(mapper.writeValueAsString(itemSendDto))
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(itemSendDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -58,6 +60,22 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$.status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));
+    }
+
+    @Test
+    void create_whenValidateException_thenBadRequestReturned() throws Exception {
+        final BookingReceiveDto itemSendDto = getBookingReceiveDtoNullBookerId();
+        final BookingReceiveDto itemToSave = getBookingReceiveDto();
+        Mockito.when(bookingService.create(itemToSave))
+                .thenThrow(new ValidateException("Item to be booked is not available"));
+
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(itemSendDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1L))
+                .andExpect(status().is(400));
     }
 
     @Test
