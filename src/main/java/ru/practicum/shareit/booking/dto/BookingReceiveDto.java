@@ -8,14 +8,13 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
-@EqualsAndHashCode
 @StartBeforeEnd
 public class BookingReceiveDto {
     @NotNull(message = "ItemId should not be null")
@@ -32,4 +31,17 @@ public class BookingReceiveDto {
     @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
     @Future(message = "End date and time should be in future")
     private LocalDateTime end;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookingReceiveDto that = (BookingReceiveDto) o;
+        return itemId == that.itemId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(itemId);
+    }
 }

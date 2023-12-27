@@ -187,7 +187,7 @@ class BookingServiceImplTest {
         Item item = getItem(owner, null);
         Booking booking = getBooking(item, owner, BookingStatus.WAITING);
         long bookingId = booking.getId();
-        ;
+
         Mockito.when(bookingRepository.findByIdAndItemOwnerId(1L, OWNER_ID))
                 .thenReturn(Optional.of(booking));
         Mockito.when(bookingRepository.countIntersectionInTime(START, END, item.getId()))

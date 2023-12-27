@@ -9,7 +9,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
 @Entity
 @Table(name = "users")

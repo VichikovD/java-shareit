@@ -7,14 +7,13 @@ import ru.practicum.shareit.validation.NotEmptyIfNotNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
-@EqualsAndHashCode
 public class ItemReceiveDto {
     private Long id;
 
@@ -30,5 +29,18 @@ public class ItemReceiveDto {
     private Boolean available;
 
     private Long requestId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemReceiveDto that = (ItemReceiveDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
 

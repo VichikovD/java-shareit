@@ -12,7 +12,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
 public class ItemSendDto {
     private Long id;
@@ -48,7 +47,6 @@ public class ItemSendDto {
     @NoArgsConstructor
     @Getter
     @Setter
-    @ToString
     @Builder
     public static class BookingDtoItem {
         private long id;
@@ -62,6 +60,19 @@ public class ItemSendDto {
         private LocalDateTime end;
 
         private BookingStatus status;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            BookingDtoItem that = (BookingDtoItem) o;
+            return id == that.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
     }
 
     public static BookingDtoItem bookingToBookingDtoItem(Booking booking) {
