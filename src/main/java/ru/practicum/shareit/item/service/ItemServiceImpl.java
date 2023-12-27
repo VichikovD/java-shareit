@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,9 +87,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemSendDto> getByOwnerId(long userId, int limit, int offset) {
-        PageRequest pageRequest = getPageRequest(Sort.Direction.ASC, "id", limit, offset);
-        List<Item> itemList = itemRepository.findAllByOwnerId(userId, pageRequest);
+    public List<ItemSendDto> getByOwnerId(long userId, Pageable pageable) {
+        List<Item> itemList = itemRepository.findAllByOwnerId(userId, pageable);
         List<ItemSendDto> itemSendDtoList = ItemMapper.itemSendDtoListFromItemList(itemList);
 
         setAllLastAndNextBookingToItemDto(itemSendDtoList);
@@ -112,13 +112,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemSendDto> search(String text, int limit, int offset) {
-        PageRequest pageRequest = getPageRequest(Sort.Direction.ASC, "id", limit, offset);
+    public List<ItemSendDto> search(String text, Pageable pageable) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
         String correctText = text.toLowerCase();
-        List<Item> itemList = itemRepository.searchAvailableByNameOrDescription(correctText, pageRequest);
+        List<Item> itemList = itemRepository.searchAvailableByNameOrDescription(correctText, pageable);
         return ItemMapper.itemSendDtoListFromItemList(itemList);
     }
 

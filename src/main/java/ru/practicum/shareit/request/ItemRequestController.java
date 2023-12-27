@@ -2,6 +2,9 @@ package ru.practicum.shareit.request;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
@@ -51,10 +54,12 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestSendDto> getAllWithOffsetAndLimit(@RequestHeader(name = "X-Sharer-User-Id") long requestingUserId,
-                                                             @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) Long limit,
-                                                             @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) Long offset) {
+                                                             @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
+                                                             @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
         log.info("POST \"/requests/all?from={}&size={}\" , Headers:(X-Sharer-User-Id)={}", offset, limit, requestingUserId);
-        List<ItemRequestSendDto> listItemRequestSendDto = itemRequestService.getAllWithOffsetAndLimit(requestingUserId, limit, offset);
+        Sort sort = Sort.by(Sort.Direction.DESC, "created");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
+        List<ItemRequestSendDto> listItemRequestSendDto = itemRequestService.getAllWithOffsetAndLimit(requestingUserId, pageable);
         log.debug(listItemRequestSendDto.toString());
         return listItemRequestSendDto;
     }

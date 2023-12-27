@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -243,201 +244,222 @@ class BookingServiceImplTest {
 
     @Test
     void findAllBookingByBookerIdAndState_whenUserNotFound_thenThrowsNotFoundException() {
+        int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> bookingService.findAllBookingByBookerIdAndState(1L, BookingState.ALL, 1, 0));
+                () -> bookingService.findAllBookingByBookerIdAndState(1L, BookingState.ALL, pageable));
         assertThat(exception.getMessage(), Matchers.is("Booking user not found by id: 1"));
     }
 
     @Test
     void findAllBookingByBookerIdAndState_whenStateAll_thenCaseAllOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(getBooker()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.ALL, limit, offset);
+        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.ALL, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllByBookerId(1L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllByBookerId(1L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByBookerIdAndState_whenStatePast_thenCasePastOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(getBooker()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.PAST, limit, offset);
+
+        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.PAST, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllPastBookingByBookerId(1L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllPastBookingByBookerId(1L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByBookerIdAndState_whenStateCurrent_thenCaseCurrentOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(getBooker()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.CURRENT, limit, offset);
+        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.CURRENT, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllCurrentBookingByBookerId(1L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllCurrentBookingByBookerId(1L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByBookerIdAndState_whenStateFuture_thenCaseFutureOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(getBooker()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.FUTURE, limit, offset);
+        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.FUTURE, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllFutureBookingByBookerId(1L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllFutureBookingByBookerId(1L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByBookerIdAndState_whenStateWaiting_thenCaseWaitingOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(getBooker()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.WAITING, limit, offset);
+        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.WAITING, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllByBookerIdAndStatus(1L, BookingStatus.WAITING, pageRequest); // due to the only happening next is DTO mapping
+                .findAllByBookerIdAndStatus(1L, BookingStatus.WAITING, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByBookerIdAndState_whenStateRejected_thenCaseRejectedOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(getBooker()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.REJECTED, limit, offset);
+        bookingService.findAllBookingByBookerIdAndState(1L, BookingState.REJECTED, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllByBookerIdAndStatus(1L, BookingStatus.REJECTED, pageRequest); // due to the only happening next is DTO mapping
+                .findAllByBookerIdAndStatus(1L, BookingStatus.REJECTED, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByOwnerIdAndState_whenUserNotFound_thenThrowsNotFoundException() {
+        int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.ALL, 1, 0));
+                () -> bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.ALL, pageable));
         assertThat(exception.getMessage(), Matchers.is("Owner user not found by id: 2"));
     }
 
     @Test
     void findAllBookingByOwnerIdAndState_whenStateAll_thenCaseAllOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(getOwner()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.ALL, limit, offset);
+        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.ALL, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllByItemOwnerId(2L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllByItemOwnerId(2L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByOwnerIdAndState_whenStatePast_thenCasePastOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(getOwner()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.PAST, limit, offset);
+        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.PAST, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllPastBookingByItemOwnerId(2L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllPastBookingByItemOwnerId(2L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByOwnerIdAndState_whenStateCurrent_thenCaseCurrentOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(getOwner()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.CURRENT, limit, offset);
+        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.CURRENT, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllCurrentBookingByItemOwnerId(2L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllCurrentBookingByItemOwnerId(2L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByOwnerIdAndState_whenStateFuture_thenCaseFutureOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(getOwner()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.FUTURE, limit, offset);
+        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.FUTURE, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllFutureBookingByItemOwnerId(2L, pageRequest); // due to the only happening next is DTO mapping
+                .findAllFutureBookingByItemOwnerId(2L, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByOwnerIdAndState_whenStateWaiting_thenCaseWaitingOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(getOwner()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.WAITING, limit, offset);
+        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.WAITING, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllByItemOwnerIdAndStatus(2L, BookingStatus.WAITING, pageRequest); // due to the only happening next is DTO mapping
+                .findAllByItemOwnerIdAndStatus(2L, BookingStatus.WAITING, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 
     @Test
     void findAllBookingByOwnerIdAndState_whenStateRejected_thenCaseRejectedOnlyInvocated() {
-        int offset = 0;
         int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(getOwner()));
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.DESC, "start"));
 
-        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.REJECTED, limit, offset);
+        bookingService.findAllBookingByOwnerIdAndState(2L, BookingState.REJECTED, pageable);
 
         Mockito.verify(bookingRepository, Mockito.times(1))  // testing only repository method invocation
-                .findAllByItemOwnerIdAndStatus(2L, BookingStatus.REJECTED, pageRequest); // due to the only happening next is DTO mapping
+                .findAllByItemOwnerIdAndStatus(2L, BookingStatus.REJECTED, pageable); // due to the only happening next is DTO mapping
         Mockito.verifyNoMoreInteractions(bookingRepository); // (which can be tested separately)
     }
 

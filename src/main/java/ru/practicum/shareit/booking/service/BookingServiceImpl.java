@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -104,29 +103,28 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> findAllBookingByBookerIdAndState(long bookerId, BookingState state, int limit, int offset) {
+    public List<BookingDto> findAllBookingByBookerIdAndState(long bookerId, BookingState state, Pageable pageable) {
         userRepository.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Booking user not found by id: " + bookerId));
-        PageRequest pageRequest = getPageRequest(Sort.Direction.DESC, "start", limit, offset);
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.findAllByBookerId(bookerId, pageRequest);
+                bookingList = bookingRepository.findAllByBookerId(bookerId, pageable);
                 break;
             case PAST:
-                bookingList = bookingRepository.findAllPastBookingByBookerId(bookerId, pageRequest);
+                bookingList = bookingRepository.findAllPastBookingByBookerId(bookerId, pageable);
                 break;
             case CURRENT:
-                bookingList = bookingRepository.findAllCurrentBookingByBookerId(bookerId, pageRequest);
+                bookingList = bookingRepository.findAllCurrentBookingByBookerId(bookerId, pageable);
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findAllFutureBookingByBookerId(bookerId, pageRequest);
+                bookingList = bookingRepository.findAllFutureBookingByBookerId(bookerId, pageable);
                 break;
             case WAITING:
-                bookingList = bookingRepository.findAllByBookerIdAndStatus(bookerId, BookingStatus.WAITING, pageRequest);
+                bookingList = bookingRepository.findAllByBookerIdAndStatus(bookerId, BookingStatus.WAITING, pageable);
                 break;
             case REJECTED:
-                bookingList = bookingRepository.findAllByBookerIdAndStatus(bookerId, BookingStatus.REJECTED, pageRequest);
+                bookingList = bookingRepository.findAllByBookerIdAndStatus(bookerId, BookingStatus.REJECTED, pageable);
                 break;
             default:
                 bookingList = new ArrayList<>();
@@ -136,41 +134,32 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> findAllBookingByOwnerIdAndState(long ownerId, BookingState state, int limit, int offset) {
+    public List<BookingDto> findAllBookingByOwnerIdAndState(long ownerId, BookingState state, Pageable pageable) {
         userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("Owner user not found by id: " + ownerId));
-        PageRequest pageRequest = getPageRequest(Sort.Direction.DESC, "start", limit, offset);
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.findAllByItemOwnerId(ownerId, pageRequest);
+                bookingList = bookingRepository.findAllByItemOwnerId(ownerId, pageable);
                 break;
             case PAST:
-                bookingList = bookingRepository.findAllPastBookingByItemOwnerId(ownerId, pageRequest);
+                bookingList = bookingRepository.findAllPastBookingByItemOwnerId(ownerId, pageable);
                 break;
             case CURRENT:
-                bookingList = bookingRepository.findAllCurrentBookingByItemOwnerId(ownerId, pageRequest);
+                bookingList = bookingRepository.findAllCurrentBookingByItemOwnerId(ownerId, pageable);
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findAllFutureBookingByItemOwnerId(ownerId, pageRequest);
+                bookingList = bookingRepository.findAllFutureBookingByItemOwnerId(ownerId, pageable);
                 break;
             case WAITING:
-                bookingList = bookingRepository.findAllByItemOwnerIdAndStatus(ownerId, BookingStatus.WAITING, pageRequest);
+                bookingList = bookingRepository.findAllByItemOwnerIdAndStatus(ownerId, BookingStatus.WAITING, pageable);
                 break;
             case REJECTED:
-                bookingList = bookingRepository.findAllByItemOwnerIdAndStatus(ownerId, BookingStatus.REJECTED, pageRequest);
+                bookingList = bookingRepository.findAllByItemOwnerIdAndStatus(ownerId, BookingStatus.REJECTED, pageable);
                 break;
             default:
                 bookingList = new ArrayList<>();
         }
         return BookingMapper.bookingListToBookingSendDtoList(bookingList);
-    }
-
-    private PageRequest getPageRequest(Sort.Direction direction, String sortParam, int limit, int offset) {
-        Sort sort = Sort.by(direction, sortParam);
-        // Данное решение из "советы ментора", но для соответствия ТЗ я бы делал через nativeQuery = true + order, limit, offset
-        // т.к. from/size будет вычислять страницу на которой находится элемент from, а не начинающуюся с элемента from.
-        // Например, при "from = 8", а "size = 3" будет вычислено 8 / 3 = 2 -> выдана страница 2 с элементами [6,7,8], а нужно по ТЗ [8,9,10]
-        return PageRequest.of((offset / limit), limit, sort);
     }
 }

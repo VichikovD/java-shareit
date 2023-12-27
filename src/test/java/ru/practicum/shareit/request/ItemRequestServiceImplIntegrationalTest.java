@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemReceiveDto;
@@ -58,8 +61,12 @@ class ItemRequestServiceImplIntegrationalTest {
                 .build();
         itemService.create(itemReceiveDto, 2L);
         itemService.create(itemReceiveDto, 2L);
+        int limit = 1;
+        int offset = 1;
+        Sort sort = Sort.by(Sort.Direction.DESC, "created");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
 
-        List<ItemRequestSendDto> itemRequestSendDtoList = itemRequestService.getAllWithOffsetAndLimit(2L, 1L, 1L);
+        List<ItemRequestSendDto> itemRequestSendDtoList = itemRequestService.getAllWithOffsetAndLimit(2L, pageable);
 
         assertThat(itemRequestSendDtoList.size(), is(1));
         assertThat(itemRequestSendDtoList.get(0).getId(), is(1L));

@@ -2,6 +2,9 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.groupMarker.OnCreate;
@@ -51,7 +54,9 @@ public class ItemController {
                                           @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
                                           @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
         log.info("GET \"/items?from={}&size={}\" , Headers:(X-Sharer-User-Id)={}", offset, limit, userId);
-        List<ItemSendDto> listToReturn = itemService.getByOwnerId(userId, limit, offset);
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
+        List<ItemSendDto> listToReturn = itemService.getByOwnerId(userId, pageable);
         log.debug(listToReturn.toString());
         return listToReturn;
     }
@@ -71,7 +76,9 @@ public class ItemController {
                                     @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
                                     @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
         log.info("GET \"/items/search?text={}&from={}&size={}\" , Headers:(X-Sharer-User-Id)={}", text, limit, offset, userId);
-        List<ItemSendDto> itemReturn = itemService.search(text, limit, offset);
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
+        List<ItemSendDto> itemReturn = itemService.search(text, pageable);
         log.debug(itemReturn.toString());
         return itemReturn;
     }

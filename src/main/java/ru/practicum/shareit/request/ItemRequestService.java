@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
 import ru.practicum.shareit.request.dto.ItemRequestSendDto;
 
@@ -12,6 +13,6 @@ public interface ItemRequestService {
 
     List<ItemRequestSendDto> getByAllByRequestingUserId(long requestingUserId);
 
-    List<ItemRequestSendDto> getAllWithOffsetAndLimit(long requestingUserId, long offset, long limit);
-
+    List<ItemRequestSendDto> getAllWithOffsetAndLimit(long requestingUserId, Pageable pageable);
+// https://stackoverflow.com/questions/38349930/spring-data-and-native-query-with-pagination
 }

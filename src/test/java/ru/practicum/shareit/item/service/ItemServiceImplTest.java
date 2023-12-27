@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -204,7 +205,7 @@ class ItemServiceImplTest {
         Mockito.when(commentRepository.findAllCommentsInIdList(List.of(itemId)))
                 .thenReturn(List.of(comment));
 
-        List<ItemSendDto> actualItemSendDtoList = itemService.getByOwnerId(OWNER_ID, 1, 0);
+        List<ItemSendDto> actualItemSendDtoList = itemService.getByOwnerId(OWNER_ID, pageRequest);
         ItemSendDto actualItemSendDto = actualItemSendDtoList.get(0);
         CommentDto actualComment = actualItemSendDto.getComments().get(0);
         ItemSendDto.BookingDtoItem actualLastBooking = actualItemSendDto.getLastBooking();
@@ -232,12 +233,13 @@ class ItemServiceImplTest {
     void search() {
         int offset = 0;
         int limit = 1;
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         Item item = getItem(getOwner(), null);
-        PageRequest pageRequest = PageRequest.of((offset / limit), limit, Sort.by(Sort.Direction.ASC, "id"));
-        Mockito.when(itemRepository.searchAvailableByNameOrDescription("name", pageRequest))
+        Mockito.when(itemRepository.searchAvailableByNameOrDescription("name", pageable))
                 .thenReturn(List.of(item));
 
-        List<ItemSendDto> actualItemSendDtoList = itemService.search("NamE", limit, offset);
+        List<ItemSendDto> actualItemSendDtoList = itemService.search("NamE", pageable);
         ItemSendDto actualItemSendDto = actualItemSendDtoList.get(0);
 
         assertThat(actualItemSendDtoList.size(), Matchers.is(1));
@@ -250,13 +252,17 @@ class ItemServiceImplTest {
         assertThat(actualItemSendDto.getNextBooking(), Matchers.nullValue());
         assertThat(actualItemSendDto.getComments(), Matchers.nullValue());
         Mockito.verify(itemRepository, Mockito.times(1))
-                .searchAvailableByNameOrDescription("name", pageRequest);
+                .searchAvailableByNameOrDescription("name", pageable);
     }
 
     @Test
     void search_whenTextIsBlank_thenReturnEmptyList() {
-        List<ItemSendDto> actualListTextEmpty = itemService.search("", 1, 0);
-        List<ItemSendDto> actualListTextNull = itemService.search(null, 1, 0);
+        int limit = 1;
+        int offset = 0;
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
+        List<ItemSendDto> actualListTextEmpty = itemService.search("", pageable);
+        List<ItemSendDto> actualListTextNull = itemService.search(null, pageable);
 
         assertThat(actualListTextEmpty.size(), Matchers.is(0));
         assertThat(actualListTextNull.size(), Matchers.is(0));

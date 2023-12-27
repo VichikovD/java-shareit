@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.repository;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,5 +29,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(value = "SELECT item " +
             "FROM Item AS item " +
             "WHERE item.isAvailable = true AND (LOWER(item.description) LIKE %?1% OR LOWER(item.name) LIKE %?1%) ")
-    List<Item> searchAvailableByNameOrDescription(String substring, PageRequest pageRequest);
+    List<Item> searchAvailableByNameOrDescription(String substring, Pageable pageable);
 }

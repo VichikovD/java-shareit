@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemSendDto;
@@ -65,11 +66,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestSendDto> getAllWithOffsetAndLimit(long requestingUserId, long limit, long offset) {
+    public List<ItemRequestSendDto> getAllWithOffsetAndLimit(long requestingUserId, Pageable pageable) {
         userRepository.findById(requestingUserId)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + requestingUserId));
 
-        List<ItemRequest> itemRequestList = itemRequestRepository.getAllWithOffsetAndLimit(requestingUserId, limit, offset);
+        List<ItemRequest> itemRequestList = itemRequestRepository.getAllWithOffsetAndLimit(requestingUserId, pageable);
         List<ItemRequestSendDto> itemRequestSendDtoList = ItemRequestMapper.toItemRequestSendDtoList(itemRequestList);
         setResponsesToAllItemRequestSendDto(itemRequestSendDtoList);
         return itemRequestSendDtoList;

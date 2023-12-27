@@ -6,6 +6,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -83,9 +86,13 @@ class ItemControllerTest {
 
     @Test
     void getByOwnerId() throws Exception {
+        int limit = 1;
+        int offset = 1;
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         ItemReceiveDto itemReceiveToSave = getItemReceiveDto();
         List<ItemSendDto> itemSendDtoList = List.of(getItemSendDto());
-        Mockito.when(itemService.getByOwnerId(1L, 1, 1))
+        Mockito.when(itemService.getByOwnerId(1L, pageable))
                 .thenReturn(itemSendDtoList);
 
         mvc.perform(get("/items")
@@ -126,8 +133,12 @@ class ItemControllerTest {
 
     @Test
     void search() throws Exception {
+        int limit = 1;
+        int offset = 1;
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         List<ItemSendDto> itemSendDtoList = List.of(getItemSendDto());
-        Mockito.when(itemService.search("item", 1, 1))
+        Mockito.when(itemService.search("item", pageable))
                 .thenReturn(itemSendDtoList);
 
         mvc.perform(get("/items/search")

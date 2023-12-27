@@ -6,6 +6,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -134,8 +137,12 @@ class BookingControllerTest {
 
     @Test
     void findAllBookingByBookerIdAndState() throws Exception {
+        int limit = 1;
+        int offset = 1;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         final List<BookingDto> bookingReturnedList = List.of(getBookingDto());
-        Mockito.when(bookingService.findAllBookingByBookerIdAndState(1L, BookingState.PAST, 1, 1))
+        Mockito.when(bookingService.findAllBookingByBookerIdAndState(1L, BookingState.PAST, pageable))
                 .thenReturn(bookingReturnedList);
 
         mvc.perform(get("/bookings")
@@ -157,8 +164,12 @@ class BookingControllerTest {
 
     @Test
     void findAllBookingByOwnerIdAndState() throws Exception {
+        int limit = 1;
+        int offset = 1;
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
         final List<BookingDto> bookingReturnedList = List.of(getBookingDto());
-        Mockito.when(bookingService.findAllBookingByOwnerIdAndState(1L, BookingState.PAST, 1, 1))
+        Mockito.when(bookingService.findAllBookingByOwnerIdAndState(1L, BookingState.PAST, pageable))
                 .thenReturn(bookingReturnedList);
 
         mvc.perform(get("/bookings/owner")

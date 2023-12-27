@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.user.model.User;
 
@@ -62,10 +65,12 @@ class ItemRequestRepositoryTest {
 
     @Test
     void getAllWithOffsetAndLimit() {
-        int offset = 1;
         int limit = 1;
+        int offset = 1;
+        Sort sort = Sort.by(Sort.Direction.DESC, "created");
+        Pageable pageable = PageRequest.of((offset / limit), limit, sort);
 
-        List<ItemRequest> itemRequestList = itemRequestRepository.getAllWithOffsetAndLimit(2L, limit, offset);
+        List<ItemRequest> itemRequestList = itemRequestRepository.getAllWithOffsetAndLimit(2L, pageable);
         ItemRequest actualItemRequest = itemRequestList.get(0);
 
         assertThat(itemRequestList.size(), is(1));
