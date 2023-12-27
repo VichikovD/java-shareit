@@ -14,5 +14,4 @@ public interface ItemRequestService {
     List<ItemRequestInfoDto> getByAllByRequestingUserId(long requestingUserId);
 
     List<ItemRequestInfoDto> getAllWithOffsetAndLimit(long requestingUserId, Pageable pageable);
-// https://stackoverflow.com/questions/38349930/spring-data-and-native-query-with-pagination
 }

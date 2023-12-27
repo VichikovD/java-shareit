@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -12,9 +11,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public class CommentRequestingDto {
-    //  Requesting чтобы при создании dto для Item, не получился ItemRequestDto,
-    //  который можно спутать с сущностью ItemRequest
+public class CommentInfoDto {
     Long id;
 
     @NotBlank(message = "Text fromString comment should not be empty or null")
@@ -24,14 +21,14 @@ public class CommentRequestingDto {
 
     LocalDateTime created;
 
-    @JsonIgnore
+    //    @JsonIgnore
     Long itemId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CommentRequestingDto that = (CommentRequestingDto) o;
+        CommentInfoDto that = (CommentInfoDto) o;
         return Objects.equals(id, that.id);
     }
 

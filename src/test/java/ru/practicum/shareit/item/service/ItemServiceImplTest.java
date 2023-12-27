@@ -168,7 +168,7 @@ class ItemServiceImplTest {
         Item item = getItem(owner, null);
         Comment comment = getComment(item, commentAndBookingUser);
         Booking lastBooking = getLastBooking(item, commentAndBookingUser);
-        ItemInfoDto.BookingDtoItem expectedLastBooking = getBookingDtoItem();
+        ItemInfoDto.BookingDto expectedLastBooking = getBookingDtoItem();
         Mockito.when(itemRepository.findById(itemId))
                 .thenReturn(Optional.of(item));
         Mockito.when(commentRepository.findAllByItemId(itemId))
@@ -214,8 +214,8 @@ class ItemServiceImplTest {
         List<ItemInfoDto> actualItemInfoDtoList = itemService.getByOwnerId(OWNER_ID, pageRequest);
         ItemInfoDto actualItemInfoDto = actualItemInfoDtoList.get(0);
         CommentInfoDto actualComment = actualItemInfoDto.getComments().get(0);
-        ItemInfoDto.BookingDtoItem actualLastBooking = actualItemInfoDto.getLastBooking();
-        ItemInfoDto.BookingDtoItem actualNextBooking = actualItemInfoDto.getNextBooking();
+        ItemInfoDto.BookingDto actualLastBooking = actualItemInfoDto.getLastBooking();
+        ItemInfoDto.BookingDto actualNextBooking = actualItemInfoDto.getNextBooking();
 
         assertThat(actualItemInfoDto.getId(), Matchers.is(1L));
         assertThat(actualItemInfoDto.getName(), Matchers.is("name"));
@@ -360,8 +360,8 @@ class ItemServiceImplTest {
                 .build();
     }
 
-    private ItemInfoDto.BookingDtoItem getBookingDtoItem() {
-        return ItemInfoDto.BookingDtoItem.builder()
+    private ItemInfoDto.BookingDto getBookingDtoItem() {
+        return ItemInfoDto.BookingDto.builder()
                 .id(1L)
                 .itemId(1L)
                 .bookerId(1L)

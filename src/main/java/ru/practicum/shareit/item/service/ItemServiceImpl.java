@@ -143,11 +143,11 @@ public class ItemServiceImpl implements ItemService {
         long itemId = itemInfoDto.getId();
         Booking lastBooking = bookingRepository.findLastForDateTime(itemId, LocalDateTime.now())
                 .orElse(null);
-        itemInfoDto.setLastBooking(ItemInfoDto.bookingToBookingDtoItem(lastBooking));
+        itemInfoDto.setLastBooking(ItemInfoDto.toBookingDto(lastBooking));
 
         Booking nextBooking = bookingRepository.findNextForDateTime(itemId, LocalDateTime.now())
                 .orElse(null);
-        itemInfoDto.setNextBooking(ItemInfoDto.bookingToBookingDtoItem(nextBooking));
+        itemInfoDto.setNextBooking(ItemInfoDto.toBookingDto(nextBooking));
     }
 
     private void setCommentsToItemDto(ItemInfoDto itemInfoDto) {
@@ -169,7 +169,7 @@ public class ItemServiceImpl implements ItemService {
             Booking lastBooking = lastBookings.stream()
                     .max(Comparator.comparing(Booking::getStart))
                     .orElse(null);
-            itemInfoDto.setLastBooking(ItemInfoDto.bookingToBookingDtoItem(lastBooking));
+            itemInfoDto.setLastBooking(ItemInfoDto.toBookingDto(lastBooking));
         }
 
         List<Booking> nextBookingList = bookingRepository.findAllNextForDateTime(itemIdList, LocalDateTime.now());
@@ -180,7 +180,7 @@ public class ItemServiceImpl implements ItemService {
             Booking nextBooking = nextBookingsList.stream()
                     .min(Comparator.comparing(Booking::getStart))
                     .orElse(null);
-            itemInfoDto.setNextBooking(ItemInfoDto.bookingToBookingDtoItem(nextBooking));
+            itemInfoDto.setNextBooking(ItemInfoDto.toBookingDto(nextBooking));
         }
     }
 

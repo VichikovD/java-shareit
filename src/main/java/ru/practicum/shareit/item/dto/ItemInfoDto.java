@@ -24,9 +24,9 @@ public class ItemInfoDto {
 
     private Long requestId;
 
-    private BookingDtoItem lastBooking;
+    private BookingDto lastBooking;
 
-    private BookingDtoItem nextBooking;
+    private BookingDto nextBooking;
 
     private List<CommentInfoDto> comments;
 
@@ -48,7 +48,7 @@ public class ItemInfoDto {
     @Getter
     @Setter
     @Builder
-    public static class BookingDtoItem {
+    public static class BookingDto {
         private long id;
 
         private long itemId;
@@ -65,7 +65,7 @@ public class ItemInfoDto {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            BookingDtoItem that = (BookingDtoItem) o;
+            BookingDto that = (BookingDto) o;
             return id == that.id;
         }
 
@@ -75,11 +75,11 @@ public class ItemInfoDto {
         }
     }
 
-    public static BookingDtoItem bookingToBookingDtoItem(Booking booking) {
+    public static BookingDto toBookingDto(Booking booking) {
         if (booking == null) {
             return null;
         }
-        return BookingDtoItem.builder()
+        return BookingDto.builder()
                 .id(booking.getId())
                 .itemId(booking.getItem().getId())
                 .bookerId(booking.getBooker().getId())

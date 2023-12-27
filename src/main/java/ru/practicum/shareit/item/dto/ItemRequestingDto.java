@@ -15,8 +15,8 @@ import java.util.Objects;
 @Setter
 @Builder
 public class ItemRequestingDto {
-    //  Requesting чтобы при создании dto для Item, не получился ItemRequestingDto,
-    //  который можно спутать с Dto для сущности ItemRequest
+    //  Requesting чтобы при создании dto для Item, не получился ItemRequestDto,
+    //  который можно спутать с сущностью ItemRequest
     private Long id;
 
     @NotBlank(groups = OnCreate.class, message = "Item name should not be empty")
