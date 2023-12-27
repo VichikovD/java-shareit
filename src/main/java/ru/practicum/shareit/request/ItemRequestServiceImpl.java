@@ -1,6 +1,6 @@
 package ru.practicum.shareit.request;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -21,17 +21,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemRequestServiceImpl implements ItemRequestService {
-    ItemRequestRepository itemRequestRepository;
-    UserRepository userRepository;
-    ItemRepository itemRepository;
-
-    @Autowired
-    ItemRequestServiceImpl(ItemRequestRepository itemRequestRepository, UserRepository userRepository, ItemRepository itemRepository) {
-        this.itemRequestRepository = itemRequestRepository;
-        this.userRepository = userRepository;
-        this.itemRepository = itemRepository;
-    }
+    final ItemRequestRepository itemRequestRepository;
+    final UserRepository userRepository;
+    final ItemRepository itemRepository;
 
     @Override
     public ItemRequestSendDto create(ItemRequestReceiveDto requestReceiveDto, long userId) {

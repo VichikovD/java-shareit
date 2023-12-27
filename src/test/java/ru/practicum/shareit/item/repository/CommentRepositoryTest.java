@@ -85,7 +85,6 @@ class CommentRepositoryTest {
         entityManager.persist(comment1);
     }
 
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void findAllCommentsInIdList() {
         List<Long> commentIdList = List.of(1L, 3L);

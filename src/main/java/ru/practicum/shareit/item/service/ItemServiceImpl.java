@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     final ItemRepository itemRepository;
     final UserRepository userRepository;
@@ -38,16 +39,6 @@ public class ItemServiceImpl implements ItemService {
     private static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
     private static final Sort SORT_START_ASC = Sort.by(Sort.Direction.ASC, "start");
 
-
-    @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository,
-                           CommentRepository commentRepository, ItemRequestRepository itemRequestRepository) {
-        this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
-        this.bookingRepository = bookingRepository;
-        this.commentRepository = commentRepository;
-        this.itemRequestRepository = itemRequestRepository;
-    }
 
     @Transactional
     @Override
