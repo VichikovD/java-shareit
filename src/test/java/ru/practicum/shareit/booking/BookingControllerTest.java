@@ -11,12 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingReceiveDto;
+import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookingInfoDto;
+import ru.practicum.shareit.booking.dto.BookingRequestingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.state.BookingState;
 import ru.practicum.shareit.exception.ValidateException;
-import ru.practicum.shareit.item.dto.ItemSendDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
@@ -45,20 +46,20 @@ class BookingControllerTest {
 
     @Test
     void create() throws Exception {
-        final BookingReceiveDto itemSendDto = getBookingReceiveDtoNullBookerId();
-        final BookingReceiveDto itemToSave = getBookingReceiveDto();
-        final BookingDto bookingReturned = getBookingDto();
+        final BookingRequestingDto itemRequestDto = getBookingReceiveDto();
+        final BookingCreateDto itemToSave = getBookingCreateDto();
+        final BookingInfoDto bookingReturned = getBookingDto();
         Mockito.when(bookingService.create(itemToSave))
                 .thenReturn(bookingReturned);
 
         mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(itemSendDto))
+                        .content(mapper.writeValueAsString(itemRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemSendDto.class))
+                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemInfoDto.class))
                 .andExpect(jsonPath("$.booker", is(getUserDto()), UserDto.class))
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
@@ -67,13 +68,13 @@ class BookingControllerTest {
 
     @Test
     void create_whenValidateException_thenBadRequestReturned() throws Exception {
-        final BookingReceiveDto itemSendDto = getBookingReceiveDtoNullBookerId();
-        final BookingReceiveDto itemToSave = getBookingReceiveDto();
+        final BookingRequestingDto itemRequestDto = getBookingReceiveDto();
+        final BookingCreateDto itemToSave = getBookingCreateDto();
         Mockito.when(bookingService.create(itemToSave))
                 .thenThrow(new ValidateException("Item to be booked is not available"));
 
         mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(itemSendDto))
+                        .content(mapper.writeValueAsString(itemRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -83,7 +84,7 @@ class BookingControllerTest {
 
     @Test
     void respondToBooking() throws Exception {
-        BookingDto bookingReturned = getBookingDto();
+        BookingInfoDto bookingReturned = getBookingDto();
         bookingReturned.setStatus(BookingStatus.APPROVED);
         Mockito.when(bookingService.respondToBooking(1L, 1L, true))
                 .thenReturn(bookingReturned);
@@ -95,7 +96,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 1L)
                         .param("approved", "true"))
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemSendDto.class))
+                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemInfoDto.class))
                 .andExpect(jsonPath("$.booker", is(getUserDto()), UserDto.class))
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
@@ -104,7 +105,7 @@ class BookingControllerTest {
 
     @Test
     void findBookingById() throws Exception {
-        final BookingDto bookingReturned = getBookingDto();
+        final BookingInfoDto bookingReturned = getBookingDto();
         Mockito.when(bookingService.findBookingById(1L, 1L))
                 .thenReturn(bookingReturned);
 
@@ -114,7 +115,7 @@ class BookingControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemSendDto.class))
+                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemInfoDto.class))
                 .andExpect(jsonPath("$.booker", is(getUserDto()), UserDto.class))
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
@@ -141,7 +142,7 @@ class BookingControllerTest {
         int offset = 1;
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
-        final List<BookingDto> bookingReturnedList = List.of(getBookingDto());
+        final List<BookingInfoDto> bookingReturnedList = List.of(getBookingDto());
         Mockito.when(bookingService.findAllBookingByBookerIdAndState(1L, BookingState.PAST, pageable))
                 .thenReturn(bookingReturnedList);
 
@@ -155,7 +156,7 @@ class BookingControllerTest {
                         .param("from", "1")
                 )
                 .andExpect(jsonPath("$[0].id", is(1L), Long.class))
-                .andExpect(jsonPath("$[0].item", is(getItemSendDto()), ItemSendDto.class))
+                .andExpect(jsonPath("$[0].item", is(getItemSendDto()), ItemInfoDto.class))
                 .andExpect(jsonPath("$[0].booker", is(getUserDto()), UserDto.class))
                 .andExpect(jsonPath("$[0].start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$[0].end", notNullValue()/*is(END), LocalDateTime.class*/))
@@ -168,7 +169,7 @@ class BookingControllerTest {
         int offset = 1;
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
-        final List<BookingDto> bookingReturnedList = List.of(getBookingDto());
+        final List<BookingInfoDto> bookingReturnedList = List.of(getBookingDto());
         Mockito.when(bookingService.findAllBookingByOwnerIdAndState(1L, BookingState.PAST, pageable))
                 .thenReturn(bookingReturnedList);
 
@@ -182,15 +183,15 @@ class BookingControllerTest {
                         .param("from", "1")
                 )
                 .andExpect(jsonPath("$[0].id", is(1L), Long.class))
-                .andExpect(jsonPath("$[0].item", is(getItemSendDto()), ItemSendDto.class))
+                .andExpect(jsonPath("$[0].item", is(getItemSendDto()), ItemInfoDto.class))
                 .andExpect(jsonPath("$[0].booker", is(getUserDto()), UserDto.class))
                 .andExpect(jsonPath("$[0].start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$[0].end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$[0].status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));
     }
 
-    private BookingDto getBookingDto() {
-        return BookingDto.builder()
+    private BookingInfoDto getBookingDto() {
+        return BookingInfoDto.builder()
                 .id(1L)
                 .item(getItemSendDto())
                 .booker(getUserDto())
@@ -200,25 +201,24 @@ class BookingControllerTest {
                 .build();
     }
 
-    private ItemSendDto getItemSendDto() {
-        return new ItemSendDto(1L, "name", "description", true, null, null, null, null);
+    private ItemInfoDto getItemSendDto() {
+        return new ItemInfoDto(1L, "name", "description", true, null, null, null, null);
     }
 
     private UserDto getUserDto() {
         return new UserDto(1L, "user@email.com", "userName");
     }
 
-    private BookingReceiveDto getBookingReceiveDtoNullBookerId() {
-        return BookingReceiveDto.builder()
+    private BookingRequestingDto getBookingReceiveDto() {
+        return BookingRequestingDto.builder()
                 .itemId(1L)
-                .bookerId(null)
                 .start(START)
                 .end(END)
                 .build();
     }
 
-    private BookingReceiveDto getBookingReceiveDto() {
-        return BookingReceiveDto.builder()
+    private BookingCreateDto getBookingCreateDto() {
+        return BookingCreateDto.builder()
                 .itemId(1L)
                 .bookerId(1L)
                 .start(START)

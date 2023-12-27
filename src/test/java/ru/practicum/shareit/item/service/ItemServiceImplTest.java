@@ -15,9 +15,10 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemReceiveDto;
-import ru.practicum.shareit.item.dto.ItemSendDto;
+import ru.practicum.shareit.item.dto.CommentInfoDto;
+import ru.practicum.shareit.item.dto.CommentRequestingDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
+import ru.practicum.shareit.item.dto.ItemRequestingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
@@ -67,32 +68,32 @@ class ItemServiceImplTest {
 
     @Test
     void create() {
-        ItemReceiveDto itemReceiveDto = getItemReceiveDtoWithRequestId();
+        ItemRequestingDto itemRequestingDto = getItemReceiveDtoWithRequestId();
         User owner = getOwner();
         ItemRequest itemRequest = getItemRequest();
         Item itemNullId = getItemNullId(owner, itemRequest);
         Item itemWithId = getItem(owner, itemRequest);
         Mockito.when(userRepository.findById(OWNER_ID))
                 .thenReturn(Optional.of(owner));
-        Mockito.when(itemRequestRepository.findById(itemReceiveDto.getRequestId()))
+        Mockito.when(itemRequestRepository.findById(itemRequestingDto.getRequestId()))
                 .thenReturn(Optional.of(itemRequest));
         Mockito.when(itemRepository.save(itemNullId))
                 .thenReturn(itemWithId);
 
-        ItemSendDto actualItemSendDto = itemService.create(itemReceiveDto, OWNER_ID);
+        ItemInfoDto actualItemInfoDto = itemService.create(itemRequestingDto, OWNER_ID);
 
-        assertThat(actualItemSendDto.getId(), Matchers.is(1L));
-        assertThat(actualItemSendDto.getName(), Matchers.is("name"));
-        assertThat(actualItemSendDto.getDescription(), Matchers.is("description"));
-        assertThat(actualItemSendDto.getAvailable(), Matchers.is(true));
-        assertThat(actualItemSendDto.getRequestId(), Matchers.is(1L));
-        assertThat(actualItemSendDto.getLastBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getNextBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getComments(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualItemInfoDto.getName(), Matchers.is("name"));
+        assertThat(actualItemInfoDto.getDescription(), Matchers.is("description"));
+        assertThat(actualItemInfoDto.getAvailable(), Matchers.is(true));
+        assertThat(actualItemInfoDto.getRequestId(), Matchers.is(1L));
+        assertThat(actualItemInfoDto.getLastBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getNextBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getComments(), Matchers.nullValue());
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(OWNER_ID);
         Mockito.verify(itemRequestRepository, Mockito.times(1))
-                .findById(itemReceiveDto.getRequestId());
+                .findById(itemRequestingDto.getRequestId());
         Mockito.verify(itemRepository, Mockito.times(1))
                 .save(itemNullId);
     }
@@ -101,7 +102,7 @@ class ItemServiceImplTest {
     void update_whenNotFoundUserById_thenThrowsNotFoundException() {
         Mockito.when(userRepository.findById(OWNER_ID))
                 .thenReturn(Optional.empty());
-        ItemReceiveDto itemReceiveDto = ItemReceiveDto.builder()
+        ItemRequestingDto itemRequestingDto = ItemRequestingDto.builder()
                 .id(1L)
                 .name("updatedName")
                 .description("updatedDescription")
@@ -110,7 +111,7 @@ class ItemServiceImplTest {
                 .build();
 
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> itemService.update(itemReceiveDto, OWNER_ID));
+                () -> itemService.update(itemRequestingDto, OWNER_ID));
         assertThat(exception.getMessage(), Matchers.is("User not found by id: " + OWNER_ID));
     }
 
@@ -118,7 +119,7 @@ class ItemServiceImplTest {
     void update() {
         User owner = getOwner();
         ItemRequest itemRequest = getItemRequest();
-        ItemReceiveDto itemReceiveDto = ItemReceiveDto.builder()
+        ItemRequestingDto itemRequestingDto = ItemRequestingDto.builder()
                 .id(1L)
                 .name("updatedName")
                 .description("updatedDescription")
@@ -136,21 +137,21 @@ class ItemServiceImplTest {
                 .build();
         Mockito.when(userRepository.findById(OWNER_ID))
                 .thenReturn(Optional.of(owner));
-        Mockito.when(itemRepository.findByIdAndOwnerId(itemReceiveDto.getId(), OWNER_ID))
+        Mockito.when(itemRepository.findByIdAndOwnerId(itemRequestingDto.getId(), OWNER_ID))
                 .thenReturn(Optional.of(itemBeforeUpdate));
         Mockito.when(itemRepository.save(itemAfterUpdate))
                 .thenReturn(itemAfterUpdate);
 
-        ItemSendDto actualItemSendDto = itemService.update(itemReceiveDto, OWNER_ID);
+        ItemInfoDto actualItemInfoDto = itemService.update(itemRequestingDto, OWNER_ID);
 
-        assertThat(actualItemSendDto.getId(), Matchers.is(1L));
-        assertThat(actualItemSendDto.getName(), Matchers.is("updatedName"));
-        assertThat(actualItemSendDto.getDescription(), Matchers.is("updatedDescription"));
-        assertThat(actualItemSendDto.getAvailable(), Matchers.is(true));
-        assertThat(actualItemSendDto.getRequestId(), Matchers.is(1L));
-        assertThat(actualItemSendDto.getLastBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getNextBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getComments(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualItemInfoDto.getName(), Matchers.is("updatedName"));
+        assertThat(actualItemInfoDto.getDescription(), Matchers.is("updatedDescription"));
+        assertThat(actualItemInfoDto.getAvailable(), Matchers.is(true));
+        assertThat(actualItemInfoDto.getRequestId(), Matchers.is(1L));
+        assertThat(actualItemInfoDto.getLastBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getNextBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getComments(), Matchers.nullValue());
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(OWNER_ID);
         Mockito.verify(itemRepository, Mockito.times(1))
@@ -166,21 +167,26 @@ class ItemServiceImplTest {
         User commentAndBookingUser = getUser();
         Item item = getItem(owner, null);
         Comment comment = getComment(item, commentAndBookingUser);
+        Booking lastBooking = getLastBooking(item, commentAndBookingUser);
+        ItemInfoDto.BookingDtoItem expectedLastBooking = getBookingDtoItem();
         Mockito.when(itemRepository.findById(itemId))
                 .thenReturn(Optional.of(item));
         Mockito.when(commentRepository.findAllByItemId(itemId))
                 .thenReturn(List.of(comment));
-        ItemSendDto actualItemSendDto = itemService.getByItemId(itemId, OWNER_ID);
-        CommentDto actualComment = actualItemSendDto.getComments().get(0);
+        Mockito.when(bookingRepository.findLastForDateTime(anyLong(), any(LocalDateTime.class)))
+                .thenReturn(Optional.of(lastBooking));
 
-        assertThat(actualItemSendDto.getId(), Matchers.is(1L));
-        assertThat(actualItemSendDto.getName(), Matchers.is("name"));
-        assertThat(actualItemSendDto.getDescription(), Matchers.is("description"));
-        assertThat(actualItemSendDto.getAvailable(), Matchers.is(true));
-        assertThat(actualItemSendDto.getRequestId(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getLastBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getNextBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getComments().size(), Matchers.is(1));
+        ItemInfoDto actualItemInfoDto = itemService.getByItemId(itemId, OWNER_ID);
+        CommentInfoDto actualComment = actualItemInfoDto.getComments().get(0);
+
+        assertThat(actualItemInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualItemInfoDto.getName(), Matchers.is("name"));
+        assertThat(actualItemInfoDto.getDescription(), Matchers.is("description"));
+        assertThat(actualItemInfoDto.getAvailable(), Matchers.is(true));
+        assertThat(actualItemInfoDto.getRequestId(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getLastBooking(), Matchers.is(expectedLastBooking));
+        assertThat(actualItemInfoDto.getNextBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getComments().size(), Matchers.is(1));
         assertThat(actualComment.getItemId(), Matchers.is(1L));
         assertThat(actualComment.getId(), Matchers.is(1L));
         assertThat(actualComment.getText(), Matchers.is("text"));
@@ -205,20 +211,20 @@ class ItemServiceImplTest {
         Mockito.when(commentRepository.findAllCommentsInIdList(List.of(itemId)))
                 .thenReturn(List.of(comment));
 
-        List<ItemSendDto> actualItemSendDtoList = itemService.getByOwnerId(OWNER_ID, pageRequest);
-        ItemSendDto actualItemSendDto = actualItemSendDtoList.get(0);
-        CommentDto actualComment = actualItemSendDto.getComments().get(0);
-        ItemSendDto.BookingDtoItem actualLastBooking = actualItemSendDto.getLastBooking();
-        ItemSendDto.BookingDtoItem actualNextBooking = actualItemSendDto.getNextBooking();
+        List<ItemInfoDto> actualItemInfoDtoList = itemService.getByOwnerId(OWNER_ID, pageRequest);
+        ItemInfoDto actualItemInfoDto = actualItemInfoDtoList.get(0);
+        CommentInfoDto actualComment = actualItemInfoDto.getComments().get(0);
+        ItemInfoDto.BookingDtoItem actualLastBooking = actualItemInfoDto.getLastBooking();
+        ItemInfoDto.BookingDtoItem actualNextBooking = actualItemInfoDto.getNextBooking();
 
-        assertThat(actualItemSendDto.getId(), Matchers.is(1L));
-        assertThat(actualItemSendDto.getName(), Matchers.is("name"));
-        assertThat(actualItemSendDto.getDescription(), Matchers.is("description"));
-        assertThat(actualItemSendDto.getAvailable(), Matchers.is(true));
-        assertThat(actualItemSendDto.getRequestId(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getLastBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getNextBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getComments().size(), Matchers.is(1));
+        assertThat(actualItemInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualItemInfoDto.getName(), Matchers.is("name"));
+        assertThat(actualItemInfoDto.getDescription(), Matchers.is("description"));
+        assertThat(actualItemInfoDto.getAvailable(), Matchers.is(true));
+        assertThat(actualItemInfoDto.getRequestId(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getLastBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getNextBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getComments().size(), Matchers.is(1));
         assertThat(actualComment.getItemId(), Matchers.is(1L));
         assertThat(actualComment.getId(), Matchers.is(1L));
         assertThat(actualComment.getText(), Matchers.is("text"));
@@ -239,18 +245,18 @@ class ItemServiceImplTest {
         Mockito.when(itemRepository.searchAvailableByNameOrDescription("name", pageable))
                 .thenReturn(List.of(item));
 
-        List<ItemSendDto> actualItemSendDtoList = itemService.search("NamE", pageable);
-        ItemSendDto actualItemSendDto = actualItemSendDtoList.get(0);
+        List<ItemInfoDto> actualItemInfoDtoList = itemService.search("NamE", pageable);
+        ItemInfoDto actualItemInfoDto = actualItemInfoDtoList.get(0);
 
-        assertThat(actualItemSendDtoList.size(), Matchers.is(1));
-        assertThat(actualItemSendDto.getId(), Matchers.is(1L));
-        assertThat(actualItemSendDto.getName(), Matchers.is("name"));
-        assertThat(actualItemSendDto.getDescription(), Matchers.is("description"));
-        assertThat(actualItemSendDto.getAvailable(), Matchers.is(true));
-        assertThat(actualItemSendDto.getRequestId(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getLastBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getNextBooking(), Matchers.nullValue());
-        assertThat(actualItemSendDto.getComments(), Matchers.nullValue());
+        assertThat(actualItemInfoDtoList.size(), Matchers.is(1));
+        assertThat(actualItemInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualItemInfoDto.getName(), Matchers.is("name"));
+        assertThat(actualItemInfoDto.getDescription(), Matchers.is("description"));
+        assertThat(actualItemInfoDto.getAvailable(), Matchers.is(true));
+        assertThat(actualItemInfoDto.getRequestId(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getLastBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getNextBooking(), Matchers.nullValue());
+        assertThat(actualItemInfoDto.getComments(), Matchers.nullValue());
         Mockito.verify(itemRepository, Mockito.times(1))
                 .searchAvailableByNameOrDescription("name", pageable);
     }
@@ -261,8 +267,8 @@ class ItemServiceImplTest {
         int offset = 0;
         Sort sort = Sort.by(Sort.Direction.ASC, "id");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
-        List<ItemSendDto> actualListTextEmpty = itemService.search("", pageable);
-        List<ItemSendDto> actualListTextNull = itemService.search(null, pageable);
+        List<ItemInfoDto> actualListTextEmpty = itemService.search("", pageable);
+        List<ItemInfoDto> actualListTextNull = itemService.search(null, pageable);
 
         assertThat(actualListTextEmpty.size(), Matchers.is(0));
         assertThat(actualListTextNull.size(), Matchers.is(0));
@@ -330,15 +336,17 @@ class ItemServiceImplTest {
         Comment commentSaved = getComment(item, commentator);
         Mockito.when(commentRepository.save(commentToSave))
                 .thenReturn(commentSaved);
-        CommentDto commentToCreate = commentDtoFromComment(commentToSave);
+        CommentRequestingDto commentToCreate = commentDtoFromComment(commentToSave);
+        CommentInfoDto expectedCommentInfoDto = getCommentInfoDto();
 
-        CommentDto actualCommentDto = itemService.createComment(commentToCreate, 1L, 1L);
+        CommentInfoDto actualCommentInfoDto = itemService.createComment(commentToCreate, 1L, 1L);
 
-        assertThat(actualCommentDto.getId(), Matchers.is(1L));
-        assertThat(actualCommentDto.getText(), Matchers.is("text"));
-        assertThat(actualCommentDto.getAuthorName(), Matchers.is("name"));
-        assertThat(actualCommentDto.getCreated(), Matchers.notNullValue());
-        assertThat(actualCommentDto.getItemId(), Matchers.is(1L));
+        assertThat(actualCommentInfoDto, Matchers.is(expectedCommentInfoDto));
+        assertThat(actualCommentInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualCommentInfoDto.getText(), Matchers.is("text"));
+        assertThat(actualCommentInfoDto.getAuthorName(), Matchers.is("name"));
+        assertThat(actualCommentInfoDto.getCreated(), Matchers.notNullValue());
+        assertThat(actualCommentInfoDto.getItemId(), Matchers.is(1L));
     }
 
     private Booking getLastBooking(Item item, User booker) {
@@ -348,6 +356,17 @@ class ItemServiceImplTest {
                 .booker(booker)
                 .start(CREATED.minusDays(2))
                 .end(CREATED.minusDays(1))
+                .status(BookingStatus.APPROVED)
+                .build();
+    }
+
+    private ItemInfoDto.BookingDtoItem getBookingDtoItem() {
+        return ItemInfoDto.BookingDtoItem.builder()
+                .id(1L)
+                .itemId(1L)
+                .bookerId(1L)
+                .start(CREATED.minusDays(4))
+                .end(CREATED.minusDays(3))
                 .status(BookingStatus.APPROVED)
                 .build();
     }
@@ -373,8 +392,8 @@ class ItemServiceImplTest {
                 .build();
     }
 
-    private CommentDto getCommentDto() {
-        return CommentDto.builder()
+    private CommentRequestingDto getCommentDto() {
+        return CommentRequestingDto.builder()
                 .id(1L)
                 .text("text")
                 .created(CREATED)
@@ -383,8 +402,18 @@ class ItemServiceImplTest {
                 .build();
     }
 
-    private CommentDto commentDtoFromComment(Comment dto) {
-        return CommentDto.builder()
+    private CommentInfoDto getCommentInfoDto() {
+        return CommentInfoDto.builder()
+                .id(1L)
+                .text("text")
+                .created(CREATED)
+                .itemId(1L)
+                .authorName("name")
+                .build();
+    }
+
+    private CommentRequestingDto commentDtoFromComment(Comment dto) {
+        return CommentRequestingDto.builder()
                 .id(dto.getId())
                 .text(dto.getText())
                 .created(CREATED)
@@ -393,8 +422,8 @@ class ItemServiceImplTest {
                 .build();
     }
 
-    private ItemReceiveDto getItemReceiveDtoNullRequestId() {
-        return ItemReceiveDto.builder()
+    private ItemRequestingDto getItemReceiveDtoNullRequestId() {
+        return ItemRequestingDto.builder()
                 .id(1L)
                 .name("name")
                 .description("description")
@@ -403,8 +432,8 @@ class ItemServiceImplTest {
                 .build();
     }
 
-    private ItemReceiveDto getItemReceiveDtoWithRequestId() {
-        return ItemReceiveDto.builder()
+    private ItemRequestingDto getItemReceiveDtoWithRequestId() {
+        return ItemRequestingDto.builder()
                 .id(1L)
                 .name("name")
                 .description("description")

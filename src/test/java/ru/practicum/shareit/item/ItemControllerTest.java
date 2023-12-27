@@ -11,9 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemReceiveDto;
-import ru.practicum.shareit.item.dto.ItemSendDto;
+import ru.practicum.shareit.item.dto.CommentInfoDto;
+import ru.practicum.shareit.item.dto.CommentRequestingDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
+import ru.practicum.shareit.item.dto.ItemRequestingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.ItemRequest;
@@ -43,10 +44,10 @@ class ItemControllerTest {
 
     @Test
     void create() throws Exception {
-        ItemReceiveDto itemToSave = getItemReceiveDtoNullId();
-        ItemSendDto itemSendDto = getItemSendDto();
+        ItemRequestingDto itemToSave = getItemReceiveDtoNullId();
+        ItemInfoDto itemInfoDto = getItemSendDto();
         Mockito.when(itemService.create(itemToSave, 1L))
-                .thenReturn(itemSendDto);
+                .thenReturn(itemInfoDto);
 
         mvc.perform(post("/items").content(mapper.writeValueAsString(itemToSave))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,10 +65,10 @@ class ItemControllerTest {
 
     @Test
     void update() throws Exception {
-        ItemReceiveDto itemReceiveToSave = getItemReceiveDto();
-        ItemSendDto itemSendDto = getItemSendDto();
+        ItemRequestingDto itemReceiveToSave = getItemReceiveDto();
+        ItemInfoDto itemInfoDto = getItemSendDto();
         Mockito.when(itemService.update(itemReceiveToSave, 1L))
-                .thenReturn(itemSendDto);
+                .thenReturn(itemInfoDto);
 
         mvc.perform(patch("/items/1")
                         .content(mapper.writeValueAsString(itemReceiveToSave))
@@ -90,10 +91,10 @@ class ItemControllerTest {
         int offset = 1;
         Sort sort = Sort.by(Sort.Direction.ASC, "id");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
-        ItemReceiveDto itemReceiveToSave = getItemReceiveDto();
-        List<ItemSendDto> itemSendDtoList = List.of(getItemSendDto());
+        ItemRequestingDto itemReceiveToSave = getItemReceiveDto();
+        List<ItemInfoDto> itemInfoDtoList = List.of(getItemSendDto());
         Mockito.when(itemService.getByOwnerId(1L, pageable))
-                .thenReturn(itemSendDtoList);
+                .thenReturn(itemInfoDtoList);
 
         mvc.perform(get("/items")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,9 +114,9 @@ class ItemControllerTest {
 
     @Test
     void getByItemId() throws Exception {
-        ItemSendDto itemSendDto = getItemSendDto();
+        ItemInfoDto itemInfoDto = getItemSendDto();
         Mockito.when(itemService.getByItemId(1L, 1L))
-                .thenReturn(itemSendDto);
+                .thenReturn(itemInfoDto);
 
         mvc.perform(get("/items/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -137,9 +138,9 @@ class ItemControllerTest {
         int offset = 1;
         Sort sort = Sort.by(Sort.Direction.ASC, "id");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
-        List<ItemSendDto> itemSendDtoList = List.of(getItemSendDto());
+        List<ItemInfoDto> itemInfoDtoList = List.of(getItemSendDto());
         Mockito.when(itemService.search("item", pageable))
-                .thenReturn(itemSendDtoList);
+                .thenReturn(itemInfoDtoList);
 
         mvc.perform(get("/items/search")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -167,8 +168,8 @@ class ItemControllerTest {
 
     @Test
     void createComment() throws Exception {
-        CommentDto commentToSave = getCommentDtoNullId();
-        CommentDto commentSaved = getCommentDto();
+        CommentRequestingDto commentToSave = getCommentDtoNullId();
+        CommentInfoDto commentSaved = getCommentDto();
         Mockito.when(itemService.createComment(commentToSave, 1L, 1L))
                 .thenReturn(commentSaved);
 
@@ -183,8 +184,8 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.created", notNullValue()));
     }
 
-    private CommentDto getCommentDtoNullId() {
-        return CommentDto.builder()
+    private CommentRequestingDto getCommentDtoNullId() {
+        return CommentRequestingDto.builder()
                 .id(null)
                 .text("text")
                 .authorName("authorName")
@@ -193,8 +194,8 @@ class ItemControllerTest {
                 .build();
     }
 
-    private CommentDto getCommentDto() {
-        return CommentDto.builder()
+    private CommentInfoDto getCommentDto() {
+        return CommentInfoDto.builder()
                 .id(1L)
                 .text("text")
                 .authorName("authorName")
@@ -214,8 +215,8 @@ class ItemControllerTest {
                 .build();
     }
 
-    private ItemSendDto getItemSendDto() {
-        return ItemSendDto.builder()
+    private ItemInfoDto getItemSendDto() {
+        return ItemInfoDto.builder()
                 .id(1L)
                 .name("itemName")
                 .description("itemDescription")
@@ -227,8 +228,8 @@ class ItemControllerTest {
                 .build();
     }
 
-    private ItemReceiveDto getItemReceiveDtoNullId() {
-        return ItemReceiveDto.builder()
+    private ItemRequestingDto getItemReceiveDtoNullId() {
+        return ItemRequestingDto.builder()
                 .id(null)
                 .name("itemName")
                 .description("itemDescription")
@@ -237,8 +238,8 @@ class ItemControllerTest {
                 .build();
     }
 
-    private ItemReceiveDto getItemReceiveDto() {
-        return ItemReceiveDto.builder()
+    private ItemRequestingDto getItemReceiveDto() {
+        return ItemRequestingDto.builder()
                 .id(1L)
                 .name("itemName")
                 .description("itemDescription")

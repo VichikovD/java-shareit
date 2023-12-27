@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
-import ru.practicum.shareit.request.dto.ItemRequestSendDto;
+import ru.practicum.shareit.request.dto.ItemRequestInfoDto;
+import ru.practicum.shareit.request.dto.ItemRequestRequestingDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -27,40 +27,40 @@ public class ItemRequestController {
     }
 
     @PostMapping
-    public ItemRequestSendDto create(@RequestBody @Valid ItemRequestReceiveDto requestReceiveDto,
+    public ItemRequestInfoDto create(@RequestBody @Valid ItemRequestRequestingDto requestReceiveDto,
                                      @RequestHeader(name = "X-Sharer-User-Id") long userId) {
         log.info("POST \"/requests\" Body={}, Headers:(X-Sharer-User-Id)={}", requestReceiveDto, userId);
-        ItemRequestSendDto itemRequestSendDto = itemRequestService.create(requestReceiveDto, userId);
-        log.debug(itemRequestSendDto.toString());
-        return itemRequestSendDto;
+        ItemRequestInfoDto itemRequestInfoDto = itemRequestService.create(requestReceiveDto, userId);
+        log.debug(itemRequestInfoDto.toString());
+        return itemRequestInfoDto;
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestSendDto getById(@RequestHeader(name = "X-Sharer-User-Id") long userId,
+    public ItemRequestInfoDto getById(@RequestHeader(name = "X-Sharer-User-Id") long userId,
                                       @PathVariable long requestId) {
         log.info("POST \"/requests/{}\" , Headers:(X-Sharer-User-Id)={}", requestId, userId);
-        ItemRequestSendDto itemRequestSendDto = itemRequestService.getById(requestId, userId);
-        log.debug(itemRequestSendDto.toString());
-        return itemRequestSendDto;
+        ItemRequestInfoDto itemRequestInfoDto = itemRequestService.getById(requestId, userId);
+        log.debug(itemRequestInfoDto.toString());
+        return itemRequestInfoDto;
     }
 
     @GetMapping
-    public List<ItemRequestSendDto> getByAllByRequestingUserId(@RequestHeader(name = "X-Sharer-User-Id") long requestingUserId) {
+    public List<ItemRequestInfoDto> getByAllByRequestingUserId(@RequestHeader(name = "X-Sharer-User-Id") long requestingUserId) {
         log.info("POST \"/requests\" , Headers:(X-Sharer-User-Id)={}", requestingUserId);
-        List<ItemRequestSendDto> listItemRequestSendDto = itemRequestService.getByAllByRequestingUserId(requestingUserId);
-        log.debug(listItemRequestSendDto.toString());
-        return listItemRequestSendDto;
+        List<ItemRequestInfoDto> listItemRequestInfoDto = itemRequestService.getByAllByRequestingUserId(requestingUserId);
+        log.debug(listItemRequestInfoDto.toString());
+        return listItemRequestInfoDto;
     }
 
     @GetMapping("/all")
-    public List<ItemRequestSendDto> getAllWithOffsetAndLimit(@RequestHeader(name = "X-Sharer-User-Id") long requestingUserId,
+    public List<ItemRequestInfoDto> getAllWithOffsetAndLimit(@RequestHeader(name = "X-Sharer-User-Id") long requestingUserId,
                                                              @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
                                                              @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
         log.info("POST \"/requests/all?from={}&size={}\" , Headers:(X-Sharer-User-Id)={}", offset, limit, requestingUserId);
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
-        List<ItemRequestSendDto> listItemRequestSendDto = itemRequestService.getAllWithOffsetAndLimit(requestingUserId, pageable);
-        log.debug(listItemRequestSendDto.toString());
-        return listItemRequestSendDto;
+        List<ItemRequestInfoDto> listItemRequestInfoDto = itemRequestService.getAllWithOffsetAndLimit(requestingUserId, pageable);
+        log.debug(listItemRequestInfoDto.toString());
+        return listItemRequestInfoDto;
     }
 }

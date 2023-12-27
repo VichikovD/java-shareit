@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public class ItemRequestMapper {
-    public static ItemRequest fromItemRequestReceiveDtoAndRequestingUser(ItemRequestReceiveDto dto, User requestingUser) {
+    public static ItemRequest toModel(ItemRequestRequestingDto dto, User requestingUser) {
         return ItemRequest.builder()
                 .description(dto.getDescription())
                 .created(LocalDateTime.now())
@@ -19,8 +19,8 @@ public class ItemRequestMapper {
     }
 
     // without List<Item> itemResponses
-    public static ItemRequestSendDto toItemRequestSendDto(ItemRequest itemRequest) {
-        return ItemRequestSendDto.builder()
+    public static ItemRequestInfoDto toItemRequestInfoDto(ItemRequest itemRequest) {
+        return ItemRequestInfoDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
@@ -29,11 +29,11 @@ public class ItemRequestMapper {
     }
 
     // without List<Item> itemResponses
-    public static List<ItemRequestSendDto> toItemRequestSendDtoList(List<ItemRequest> itemRequestList) {
-        List<ItemRequestSendDto> itemRequestSendDtoList = new ArrayList<>();
+    public static List<ItemRequestInfoDto> toItemRequestInfoDtoList(List<ItemRequest> itemRequestList) {
+        List<ItemRequestInfoDto> itemRequestInfoDtoList = new ArrayList<>();
         for (ItemRequest itemRequest : itemRequestList) {
-            itemRequestSendDtoList.add(toItemRequestSendDto(itemRequest));
+            itemRequestInfoDtoList.add(toItemRequestInfoDto(itemRequest));
         }
-        return itemRequestSendDtoList;
+        return itemRequestInfoDtoList;
     }
 }

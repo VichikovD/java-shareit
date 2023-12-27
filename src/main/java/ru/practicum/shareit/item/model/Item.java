@@ -43,7 +43,7 @@ public class Item {
     @OneToMany(mappedBy = "item")
     private Set<Comment> comments;*/
 
-/*    public void updateByItemDto(ItemReceiveDto itemDto, Item item) {
+/*    public void updateByItemDto(ItemRequestingDto itemDto, Item item) {
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }

@@ -12,7 +12,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public class CommentDto {
+public class CommentRequestingDto {
+    //  Requesting чтобы при создании dto для Item, не получился ItemRequestingDto,
+    //  который можно спутать с Dto для сущности ItemRequest
     Long id;
 
     @NotBlank(message = "Text fromString comment should not be empty or null")
@@ -29,7 +31,7 @@ public class CommentDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CommentDto that = (CommentDto) o;
+        CommentRequestingDto that = (CommentRequestingDto) o;
         return Objects.equals(id, that.id);
     }
 

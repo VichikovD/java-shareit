@@ -8,11 +8,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemSendDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
-import ru.practicum.shareit.request.dto.ItemRequestSendDto;
+import ru.practicum.shareit.request.dto.ItemRequestInfoDto;
+import ru.practicum.shareit.request.dto.ItemRequestRequestingDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -47,7 +47,7 @@ class ItemRequestServiceImplTest {
         Mockito.when(itemRequestRepository.save(any(ItemRequest.class)))  // any due to field "created" initialized in mapper
                 .thenReturn(itemRequestToReturn);
 
-        ItemRequestSendDto actualRequestDto = itemRequestService.create(new ItemRequestReceiveDto("description"), 1L);
+        ItemRequestInfoDto actualRequestDto = itemRequestService.create(new ItemRequestRequestingDto("description"), 1L);
 
         assertThat(actualRequestDto.getId(), Matchers.is(1L));
         assertThat(actualRequestDto.getDescription(), Matchers.is("description"));
@@ -68,7 +68,7 @@ class ItemRequestServiceImplTest {
                 .thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> itemRequestService.create(new ItemRequestReceiveDto("description"), 1L));
+                () -> itemRequestService.create(new ItemRequestRequestingDto("description"), 1L));
         assertThat(exception.getMessage(), Matchers.is("User not found by id: 1"));
     }
 
@@ -85,8 +85,8 @@ class ItemRequestServiceImplTest {
         Mockito.when(itemRepository.findAllByItemRequestId(1L))
                 .thenReturn(List.of(responseItem));
 
-        ItemRequestSendDto actualRequestDto = itemRequestService.getById(1L, 1L);
-        ItemSendDto response = actualRequestDto.getItems().get(0);
+        ItemRequestInfoDto actualRequestDto = itemRequestService.getById(1L, 1L);
+        ItemInfoDto response = actualRequestDto.getItems().get(0);
 
         assertThat(actualRequestDto.getId(), Matchers.is(1L));
         assertThat(actualRequestDto.getDescription(), Matchers.is("description"));

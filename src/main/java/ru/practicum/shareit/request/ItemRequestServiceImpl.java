@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemSendDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.dto.ItemRequestInfoDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
-import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
-import ru.practicum.shareit.request.dto.ItemRequestSendDto;
+import ru.practicum.shareit.request.dto.ItemRequestRequestingDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -28,57 +28,57 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     final ItemRepository itemRepository;
 
     @Override
-    public ItemRequestSendDto create(ItemRequestReceiveDto requestReceiveDto, long userId) {
+    public ItemRequestInfoDto create(ItemRequestRequestingDto requestReceiveDto, long userId) {
         User requestingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + userId));
-        ItemRequest itemRequest = ItemRequestMapper.fromItemRequestReceiveDtoAndRequestingUser(requestReceiveDto, requestingUser);
+        ItemRequest itemRequest = ItemRequestMapper.toModel(requestReceiveDto, requestingUser);
         ItemRequest savedItemRequest = itemRequestRepository.save(itemRequest);
-        return ItemRequestMapper.toItemRequestSendDto(savedItemRequest);
+        return ItemRequestMapper.toItemRequestInfoDto(savedItemRequest);
     }
 
     @Override
-    public ItemRequestSendDto getById(long itemRequestId, long userId) {
+    public ItemRequestInfoDto getById(long itemRequestId, long userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + userId));
         ItemRequest itemRequest = itemRequestRepository.findById(itemRequestId)
                 .orElseThrow(() -> new NotFoundException("ItemRequest not found by id: " + itemRequestId));
 
-        ItemRequestSendDto itemRequestSendDto = ItemRequestMapper.toItemRequestSendDto(itemRequest);
-        setResponsesToItemRequestSendDto(itemRequestSendDto);
-        return itemRequestSendDto;
+        ItemRequestInfoDto itemRequestInfoDto = ItemRequestMapper.toItemRequestInfoDto(itemRequest);
+        setResponsesToItemRequestSendDto(itemRequestInfoDto);
+        return itemRequestInfoDto;
     }
 
     @Override
-    public List<ItemRequestSendDto> getByAllByRequestingUserId(long requestingUserId) {
+    public List<ItemRequestInfoDto> getByAllByRequestingUserId(long requestingUserId) {
         userRepository.findById(requestingUserId)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + requestingUserId));
 
         List<ItemRequest> itemRequestList = itemRequestRepository.findAllByRequestingUserId(requestingUserId);
-        List<ItemRequestSendDto> itemRequestSendDtoList = ItemRequestMapper.toItemRequestSendDtoList(itemRequestList);
-        setResponsesToAllItemRequestSendDto(itemRequestSendDtoList);
-        return itemRequestSendDtoList;
+        List<ItemRequestInfoDto> itemRequestInfoDtoList = ItemRequestMapper.toItemRequestInfoDtoList(itemRequestList);
+        setResponsesToAllItemRequestSendDto(itemRequestInfoDtoList);
+        return itemRequestInfoDtoList;
     }
 
     @Override
-    public List<ItemRequestSendDto> getAllWithOffsetAndLimit(long requestingUserId, Pageable pageable) {
+    public List<ItemRequestInfoDto> getAllWithOffsetAndLimit(long requestingUserId, Pageable pageable) {
         userRepository.findById(requestingUserId)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + requestingUserId));
 
         List<ItemRequest> itemRequestList = itemRequestRepository.getAllWithOffsetAndLimit(requestingUserId, pageable);
-        List<ItemRequestSendDto> itemRequestSendDtoList = ItemRequestMapper.toItemRequestSendDtoList(itemRequestList);
-        setResponsesToAllItemRequestSendDto(itemRequestSendDtoList);
-        return itemRequestSendDtoList;
+        List<ItemRequestInfoDto> itemRequestInfoDtoList = ItemRequestMapper.toItemRequestInfoDtoList(itemRequestList);
+        setResponsesToAllItemRequestSendDto(itemRequestInfoDtoList);
+        return itemRequestInfoDtoList;
     }
 
-    private void setResponsesToItemRequestSendDto(ItemRequestSendDto itemRequestSendDto) {
-        long itemRequestId = itemRequestSendDto.getId();
+    private void setResponsesToItemRequestSendDto(ItemRequestInfoDto itemRequestInfoDto) {
+        long itemRequestId = itemRequestInfoDto.getId();
         List<Item> itemResponses = itemRepository.findAllByItemRequestId(itemRequestId);
-        itemRequestSendDto.setItems(ItemMapper.itemSendDtoListFromItemList(itemResponses));
+        itemRequestInfoDto.setItems(ItemMapper.toItemInfoDtoList(itemResponses));
     }
 
-    private void setResponsesToAllItemRequestSendDto(Collection<ItemRequestSendDto> itemRequestSendDtoCollection) {
-        List<Long> itemRequestIdList = itemRequestSendDtoCollection.stream()
-                .map(ItemRequestSendDto::getId)
+    private void setResponsesToAllItemRequestSendDto(Collection<ItemRequestInfoDto> itemRequestInfoDtoCollection) {
+        List<Long> itemRequestIdList = itemRequestInfoDtoCollection.stream()
+                .map(ItemRequestInfoDto::getId)
                 .collect(Collectors.toList());
         List<Item> allItemsInRequestIdList = itemRepository.findAllByItemRequestIdIn(itemRequestIdList);
 
@@ -86,8 +86,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .stream()
                 .collect(Collectors.groupingBy((item) -> item.getItemRequest().id));
 
-        for (ItemRequestSendDto requestSendDto : itemRequestSendDtoCollection) {
-            List<ItemSendDto> responses = ItemMapper.itemSendDtoListFromItemList(
+        for (ItemRequestInfoDto requestSendDto : itemRequestInfoDtoCollection) {
+            List<ItemInfoDto> responses = ItemMapper.toItemInfoDtoList(
                     requestIdToItemListMap.getOrDefault(requestSendDto.getId(), new ArrayList<>()));
             requestSendDto.setItems(responses);
         }

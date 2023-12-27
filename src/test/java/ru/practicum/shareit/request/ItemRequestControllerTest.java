@@ -11,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
-import ru.practicum.shareit.request.dto.ItemRequestSendDto;
+import ru.practicum.shareit.request.dto.ItemRequestInfoDto;
+import ru.practicum.shareit.request.dto.ItemRequestRequestingDto;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -38,8 +38,8 @@ class ItemRequestControllerTest {
 
     @Test
     void create() throws Exception {
-        final ItemRequestReceiveDto itemRequestToSave = getItemRequestReceiveDto();
-        final ItemRequestSendDto itemRequestSaved = getItemRequestSendDto();
+        final ItemRequestRequestingDto itemRequestToSave = getItemRequestReceiveDto();
+        final ItemRequestInfoDto itemRequestSaved = getItemRequestSendDto();
         Mockito.when(itemRequestService.create(itemRequestToSave, 1L))
                 .thenReturn(itemRequestSaved);
 
@@ -57,7 +57,7 @@ class ItemRequestControllerTest {
 
     @Test
     void getById() throws Exception {
-        final ItemRequestSendDto ItemRequestSaved = getItemRequestSendDto();
+        final ItemRequestInfoDto ItemRequestSaved = getItemRequestSendDto();
         Mockito.when(itemRequestService.getById(1L, 1L))
                 .thenReturn(ItemRequestSaved);
 
@@ -74,7 +74,7 @@ class ItemRequestControllerTest {
 
     @Test
     void getByAllByRequestingUserId() throws Exception {
-        final List<ItemRequestSendDto> ItemRequestSavedList = List.of(getItemRequestSendDto());
+        final List<ItemRequestInfoDto> ItemRequestSavedList = List.of(getItemRequestSendDto());
         Mockito.when(itemRequestService.getByAllByRequestingUserId(1L))
                 .thenReturn(ItemRequestSavedList);
 
@@ -95,7 +95,7 @@ class ItemRequestControllerTest {
         int offset = 1;
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
-        final List<ItemRequestSendDto> ItemRequestSavedList = List.of(getItemRequestSendDto());
+        final List<ItemRequestInfoDto> ItemRequestSavedList = List.of(getItemRequestSendDto());
         Mockito.when(itemRequestService.getAllWithOffsetAndLimit(1L, pageable))
                 .thenReturn(ItemRequestSavedList);
 
@@ -113,8 +113,8 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$[0].items", nullValue()));
     }
 
-    private ItemRequestSendDto getItemRequestSendDto() {
-        return ItemRequestSendDto.builder()
+    private ItemRequestInfoDto getItemRequestSendDto() {
+        return ItemRequestInfoDto.builder()
                 .id(1L)
                 .description("description")
                 .created(CREATED)
@@ -122,7 +122,7 @@ class ItemRequestControllerTest {
                 .build();
     }
 
-    private ItemRequestReceiveDto getItemRequestReceiveDto() {
-        return new ItemRequestReceiveDto("description");
+    private ItemRequestRequestingDto getItemRequestReceiveDto() {
+        return new ItemRequestRequestingDto("description");
     }
 }

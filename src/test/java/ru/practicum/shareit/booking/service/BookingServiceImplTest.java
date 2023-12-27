@@ -12,8 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingReceiveDto;
+import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookingInfoDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.state.BookingState;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -54,7 +54,7 @@ class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> bookingService.create(getBookingReceiveDto()));
+                () -> bookingService.create(getBookingCreateDto()));
         assertThat(exception.getMessage(), Matchers.is("Booking user not found by id: 1"));
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(BOOKER_ID);
@@ -70,7 +70,7 @@ class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> bookingService.create(getBookingReceiveDto()));
+                () -> bookingService.create(getBookingCreateDto()));
         assertThat(exception.getMessage(), Matchers.is("Item to be booked not found by id: 1"));
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(BOOKER_ID);
@@ -90,7 +90,7 @@ class BookingServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         ValidateException exception = assertThrows(ValidateException.class,
-                () -> bookingService.create(getBookingReceiveDto()));
+                () -> bookingService.create(getBookingCreateDto()));
         assertThat(exception.getMessage(), Matchers.is("Item to be booked is not available"));
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(BOOKER_ID);
@@ -111,7 +111,7 @@ class BookingServiceImplTest {
                 .thenReturn(1);
 
         ValidateException exception = assertThrows(ValidateException.class,
-                () -> bookingService.create(getBookingReceiveDto()));
+                () -> bookingService.create(getBookingCreateDto()));
         assertThat(exception.getMessage(), Matchers.is("Item to be booked is already booked in between date " + START + " and " + END));
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(BOOKER_ID);
@@ -125,8 +125,8 @@ class BookingServiceImplTest {
     @Test
     void create_whenItemOwnerIdEqualsBookerId_thenThrowsNotFoundException() {
         User bookerOwner = getOwner();
-        BookingReceiveDto bookingReceiveDto = getBookingReceiveDto();
-        bookingReceiveDto.setBookerId(OWNER_ID);   // now booker is owner of item
+        BookingCreateDto bookingCreateDto = getBookingCreateDto();
+        bookingCreateDto.setBookerId(OWNER_ID);   // now booker is owner of item
         Item item = getItem(bookerOwner, null);    // now booker is owner of item
         Mockito.when(userRepository.findById(OWNER_ID))    // find user by ownerId
                 .thenReturn(Optional.of(bookerOwner));
@@ -136,7 +136,7 @@ class BookingServiceImplTest {
                 .thenReturn(0);
 
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> bookingService.create(bookingReceiveDto));
+                () -> bookingService.create(bookingCreateDto));
         assertThat(exception.getMessage(), Matchers.is("Booker with Id=" + OWNER_ID + " can't book item with owner Id=" + OWNER_ID));
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(OWNER_ID);
@@ -162,7 +162,7 @@ class BookingServiceImplTest {
         Mockito.when(bookingRepository.save(bookingToSave))
                 .thenReturn(bookingSaved);
 
-        BookingDto actualBookingSendDto = bookingService.create(getBookingReceiveDto());
+        BookingInfoDto actualBookingSendDto = bookingService.create(getBookingCreateDto());
 
         assertThat(actualBookingSendDto.getId(), Matchers.is(1L));
         assertThat(actualBookingSendDto.getItem().getId(), Matchers.is(1L));
@@ -196,14 +196,14 @@ class BookingServiceImplTest {
         Mockito.when(bookingRepository.save(bookingToSave))
                 .thenReturn(bookingToSave);
 
-        BookingDto actualBookingDto = bookingService.respondToBooking(OWNER_ID, 1L, true);
+        BookingInfoDto actualBookingInfoDto = bookingService.respondToBooking(OWNER_ID, 1L, true);
 
-        assertThat(actualBookingDto.getId(), Matchers.is(1L));
-        assertThat(actualBookingDto.getItem().getId(), Matchers.is(1L));
-        assertThat(actualBookingDto.getBooker().getId(), Matchers.is(2L));
-        assertThat(actualBookingDto.getStart(), Matchers.is(START));
-        assertThat(actualBookingDto.getEnd(), Matchers.is(END));
-        assertThat(actualBookingDto.getStatus(), Matchers.is(BookingStatus.APPROVED));
+        assertThat(actualBookingInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualBookingInfoDto.getItem().getId(), Matchers.is(1L));
+        assertThat(actualBookingInfoDto.getBooker().getId(), Matchers.is(2L));
+        assertThat(actualBookingInfoDto.getStart(), Matchers.is(START));
+        assertThat(actualBookingInfoDto.getEnd(), Matchers.is(END));
+        assertThat(actualBookingInfoDto.getStatus(), Matchers.is(BookingStatus.APPROVED));
         Mockito.verify(bookingRepository, Mockito.times(1))
                 .findByIdAndItemOwnerId(bookingId, OWNER_ID);
         Mockito.verify(bookingRepository, Mockito.times(1))
@@ -232,14 +232,14 @@ class BookingServiceImplTest {
         Mockito.when(bookingRepository.findByIdAndOwnerIdOrBookerId(1L, 2L))
                 .thenReturn(Optional.of(booking));
 
-        BookingDto actualBookingDto = bookingService.findBookingById(owner.getId(), booking.getId());
+        BookingInfoDto actualBookingInfoDto = bookingService.findBookingById(owner.getId(), booking.getId());
 
-        assertThat(actualBookingDto.getId(), Matchers.is(1L));
-        assertThat(actualBookingDto.getItem().getId(), Matchers.is(1L));
-        assertThat(actualBookingDto.getBooker().getId(), Matchers.is(1L));
-        assertThat(actualBookingDto.getStart(), Matchers.is(START));
-        assertThat(actualBookingDto.getEnd(), Matchers.is(END));
-        assertThat(actualBookingDto.getStatus(), Matchers.is(BookingStatus.APPROVED));
+        assertThat(actualBookingInfoDto.getId(), Matchers.is(1L));
+        assertThat(actualBookingInfoDto.getItem().getId(), Matchers.is(1L));
+        assertThat(actualBookingInfoDto.getBooker().getId(), Matchers.is(1L));
+        assertThat(actualBookingInfoDto.getStart(), Matchers.is(START));
+        assertThat(actualBookingInfoDto.getEnd(), Matchers.is(END));
+        assertThat(actualBookingInfoDto.getStatus(), Matchers.is(BookingStatus.APPROVED));
     }
 
     @Test
@@ -485,8 +485,8 @@ class BookingServiceImplTest {
                 .build();
     }
 
-    private BookingReceiveDto getBookingReceiveDto() {
-        return BookingReceiveDto.builder()
+    private BookingCreateDto getBookingCreateDto() {
+        return BookingCreateDto.builder()
                 .bookerId(1L)
                 .itemId(1L)
                 .start(START)

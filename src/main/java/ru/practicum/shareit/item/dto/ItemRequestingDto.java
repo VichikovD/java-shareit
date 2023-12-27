@@ -14,7 +14,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public class ItemReceiveDto {
+public class ItemRequestingDto {
+    //  Requesting чтобы при создании dto для Item, не получился ItemRequestingDto,
+    //  который можно спутать с Dto для сущности ItemRequest
     private Long id;
 
     @NotBlank(groups = OnCreate.class, message = "Item name should not be empty")
@@ -34,7 +36,7 @@ public class ItemReceiveDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemReceiveDto that = (ItemReceiveDto) o;
+        ItemRequestingDto that = (ItemRequestingDto) o;
         return Objects.equals(id, that.id);
     }
 

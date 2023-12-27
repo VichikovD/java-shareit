@@ -9,10 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.item.dto.ItemReceiveDto;
+import ru.practicum.shareit.item.dto.ItemRequestingDto;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
-import ru.practicum.shareit.request.dto.ItemRequestReceiveDto;
-import ru.practicum.shareit.request.dto.ItemRequestSendDto;
+import ru.practicum.shareit.request.dto.ItemRequestInfoDto;
+import ru.practicum.shareit.request.dto.ItemRequestRequestingDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
@@ -44,31 +44,31 @@ class ItemRequestServiceImplIntegrationalTest {
                 .email("requesting@email.com")
                 .build();
         UserDto requester = userService.create(requestingUser);
-        ItemRequestReceiveDto requestReceiveDto1 = new ItemRequestReceiveDto("itemRequest1");
-        ItemRequestReceiveDto requestReceiveDto2 = new ItemRequestReceiveDto("itemRequest2");
-        ItemRequestSendDto itemRequestSendDto1 = itemRequestService.create(requestReceiveDto1, 1L);
-        ItemRequestSendDto itemRequestSendDto2 = itemRequestService.create(requestReceiveDto2, 1L);
+        ItemRequestRequestingDto requestReceiveDto1 = new ItemRequestRequestingDto("itemRequest1");
+        ItemRequestRequestingDto requestReceiveDto2 = new ItemRequestRequestingDto("itemRequest2");
+        ItemRequestInfoDto itemRequestInfoDto1 = itemRequestService.create(requestReceiveDto1, 1L);
+        ItemRequestInfoDto itemRequestInfoDto2 = itemRequestService.create(requestReceiveDto2, 1L);
         UserDto owner = UserDto.builder()
                 .name("userName")
                 .email("user@email.com")
                 .build();
         userService.create(owner);
-        ItemReceiveDto itemReceiveDto = ItemReceiveDto.builder()
+        ItemRequestingDto itemRequestingDto = ItemRequestingDto.builder()
                 .name("itemName")
                 .description("itemDescription")
                 .available(true)
                 .requestId(1L)
                 .build();
-        itemService.create(itemReceiveDto, 2L);
-        itemService.create(itemReceiveDto, 2L);
+        itemService.create(itemRequestingDto, 2L);
+        itemService.create(itemRequestingDto, 2L);
         int limit = 1;
         int offset = 1;
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
 
-        List<ItemRequestSendDto> itemRequestSendDtoList = itemRequestService.getAllWithOffsetAndLimit(2L, pageable);
+        List<ItemRequestInfoDto> itemRequestInfoDtoList = itemRequestService.getAllWithOffsetAndLimit(2L, pageable);
 
-        assertThat(itemRequestSendDtoList.size(), is(1));
-        assertThat(itemRequestSendDtoList.get(0).getId(), is(1L));
+        assertThat(itemRequestInfoDtoList.size(), is(1));
+        assertThat(itemRequestInfoDtoList.get(0).getId(), is(1L));
     }
 }

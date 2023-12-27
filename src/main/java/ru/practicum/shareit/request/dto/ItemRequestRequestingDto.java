@@ -12,7 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ItemRequestReceiveDto {
+public class ItemRequestRequestingDto {
     @NotBlank(message = "ItemRequest's description should not be empty or null")
     private String description;
 
@@ -20,7 +20,7 @@ public class ItemRequestReceiveDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemRequestReceiveDto that = (ItemRequestReceiveDto) o;
+        ItemRequestRequestingDto that = (ItemRequestRequestingDto) o;
         return Objects.equals(description, that.description);
     }
 

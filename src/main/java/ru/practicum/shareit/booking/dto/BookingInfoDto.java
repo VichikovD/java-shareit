@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.item.dto.ItemSendDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
@@ -13,10 +13,10 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public class BookingDto {
+public class BookingInfoDto {
     private long id;
 
-    private ItemSendDto item;
+    private ItemInfoDto item;
 
     private UserDto booker;
 
@@ -30,7 +30,7 @@ public class BookingDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BookingDto that = (BookingDto) o;
+        BookingInfoDto that = (BookingInfoDto) o;
         return id == that.id;
     }
 

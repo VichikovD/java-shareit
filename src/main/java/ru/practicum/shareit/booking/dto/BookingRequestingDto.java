@@ -16,11 +16,11 @@ import java.util.Objects;
 @Setter
 @Builder
 @StartBeforeEnd
-public class BookingReceiveDto {
+public class BookingRequestingDto {
+    //  Requesting чтобы при создании dto для Item, не получился ItemRequestingDto,
+    //  который можно спутать с Dto для сущности ItemRequest
     @NotNull(message = "ItemId should not be null")
     private long itemId;
-
-    private Long bookerId;
 
     @NotNull(message = "Start date-time should not be null")
     @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
@@ -36,7 +36,7 @@ public class BookingReceiveDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BookingReceiveDto that = (BookingReceiveDto) o;
+        BookingRequestingDto that = (BookingRequestingDto) o;
         return itemId == that.itemId;
     }
 

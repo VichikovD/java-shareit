@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public class ItemSendDto {
+public class ItemInfoDto {
     private Long id;
 
     private String name;
@@ -28,14 +28,14 @@ public class ItemSendDto {
 
     private BookingDtoItem nextBooking;
 
-    private List<CommentDto> comments;
+    private List<CommentInfoDto> comments;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemSendDto itemSendDto = (ItemSendDto) o;
-        return Objects.equals(id, itemSendDto.id);
+        ItemInfoDto itemInfoDto = (ItemInfoDto) o;
+        return Objects.equals(id, itemInfoDto.id);
     }
 
     @Override

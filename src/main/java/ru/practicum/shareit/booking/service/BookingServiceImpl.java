@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookingInfoDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingReceiveDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.state.BookingState;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -31,11 +31,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDto create(BookingReceiveDto bookingReceiveDto) {
-        long bookerId = bookingReceiveDto.getBookerId();
-        long itemId = bookingReceiveDto.getItemId();
-        LocalDateTime start = bookingReceiveDto.getStart();
-        LocalDateTime end = bookingReceiveDto.getEnd();
+    public BookingInfoDto create(BookingCreateDto bookingCreateDto) {
+        long bookerId = bookingCreateDto.getBookerId();
+        long itemId = bookingCreateDto.getItemId();
+        LocalDateTime start = bookingCreateDto.getStart();
+        LocalDateTime end = bookingCreateDto.getEnd();
 
         User booker = userRepository.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Booking user not found by id: " + bookerId));
@@ -56,14 +56,14 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Booker with Id=" + bookerId + " can't book item with owner Id=" + ownerId);
         }
 
-        Booking booking = BookingMapper.bookingReceiveDtoToBooking(bookingReceiveDto, booker, item, BookingStatus.WAITING);
+        Booking booking = BookingMapper.toModel(bookingCreateDto, booker, item, BookingStatus.WAITING);
         Booking bookingToReturn = bookingRepository.save(booking);
-        return BookingMapper.bookingToBookingSendDto(bookingToReturn);
+        return BookingMapper.toInfoDto(bookingToReturn);
     }
 
     @Transactional
     @Override
-    public BookingDto respondToBooking(long ownerId, long bookingId, boolean approved) {
+    public BookingInfoDto respondToBooking(long ownerId, long bookingId, boolean approved) {
         // метод ищет по одному конкретному booking id (Что уже не может вернуть список) и по owner id, чтобы убедиться,
         // что именно этот юзер владелец итема
         Booking booking = bookingRepository.findByIdAndItemOwnerId(bookingId, ownerId)
@@ -85,21 +85,21 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setStatus(BookingStatus.getBookingStatusByBoolean(approved));
         Booking bookingToReturn = bookingRepository.save(booking);
-        return BookingMapper.bookingToBookingSendDto(bookingToReturn);
+        return BookingMapper.toInfoDto(bookingToReturn);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public BookingDto findBookingById(long userId, long bookingId) {
+    public BookingInfoDto findBookingById(long userId, long bookingId) {
         Booking booking = bookingRepository.findByIdAndOwnerIdOrBookerId(bookingId, userId)
                 .orElseThrow(() -> new NotFoundException("Booking with id " + bookingId + " not found for user with id: " + userId));
 
-        return BookingMapper.bookingToBookingSendDto(booking);
+        return BookingMapper.toInfoDto(booking);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> findAllBookingByBookerIdAndState(long bookerId, BookingState state, Pageable pageable) {
+    public List<BookingInfoDto> findAllBookingByBookerIdAndState(long bookerId, BookingState state, Pageable pageable) {
         userRepository.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Booking user not found by id: " + bookerId));
         List<Booking> bookingList;
@@ -125,12 +125,12 @@ public class BookingServiceImpl implements BookingService {
             default:
                 bookingList = new ArrayList<>();
         }
-        return BookingMapper.bookingListToBookingSendDtoList(bookingList);
+        return BookingMapper.toBookingInfoDtoList(bookingList);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> findAllBookingByOwnerIdAndState(long ownerId, BookingState state, Pageable pageable) {
+    public List<BookingInfoDto> findAllBookingByOwnerIdAndState(long ownerId, BookingState state, Pageable pageable) {
         userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("Owner user not found by id: " + ownerId));
         List<Booking> bookingList;
@@ -156,6 +156,6 @@ public class BookingServiceImpl implements BookingService {
             default:
                 bookingList = new ArrayList<>();
         }
-        return BookingMapper.bookingListToBookingSendDtoList(bookingList);
+        return BookingMapper.toBookingInfoDtoList(bookingList);
     }
 }
