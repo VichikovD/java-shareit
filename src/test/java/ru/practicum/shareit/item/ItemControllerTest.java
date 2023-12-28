@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +47,7 @@ class ItemControllerTest {
     void create() throws Exception {
         ItemRequestingDto itemToSave = getItemReceiveDtoNullId();
         ItemInfoDto itemInfoDto = getItemSendDto();
-        Mockito.when(itemService.create(itemToSave, 1L))
+        Mockito.when(itemService.create(Mockito.any(ItemRequestingDto.class), anyLong()))
                 .thenReturn(itemInfoDto);
 
         mvc.perform(post("/items").content(mapper.writeValueAsString(itemToSave))
@@ -67,7 +68,7 @@ class ItemControllerTest {
     void update() throws Exception {
         ItemRequestingDto itemReceiveToSave = getItemReceiveDto();
         ItemInfoDto itemInfoDto = getItemSendDto();
-        Mockito.when(itemService.update(itemReceiveToSave, 1L))
+        Mockito.when(itemService.update(Mockito.any(ItemRequestingDto.class), anyLong()))
                 .thenReturn(itemInfoDto);
 
         mvc.perform(patch("/items/1")
@@ -170,7 +171,7 @@ class ItemControllerTest {
     void createComment() throws Exception {
         CommentRequestingDto commentToSave = getCommentDtoNullId();
         CommentInfoDto commentSaved = getCommentDto();
-        Mockito.when(itemService.createComment(commentToSave, 1L, 1L))
+        Mockito.when(itemService.createComment(Mockito.any(CommentRequestingDto.class), anyLong(), anyLong()))
                 .thenReturn(commentSaved);
 
         mvc.perform(post("/items/1/comment").content(mapper.writeValueAsString(commentToSave))

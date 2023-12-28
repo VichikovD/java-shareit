@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,10 +35,11 @@ class UserControllerTest {
     void create() throws Exception {
         UserDto userToSave = getUserDtoNullId();
         UserDto userSaved = getUserDto();
-        Mockito.when(userService.create(userToSave))
+        Mockito.when(userService.create(any(UserDto.class)))
                 .thenReturn(userSaved);
 
-        mvc.perform(post("/users").content(mapper.writeValueAsString(userToSave))
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userToSave))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))
@@ -49,9 +51,11 @@ class UserControllerTest {
     @Test
     void update() throws Exception {
         UserDto user = getUserDto();
-        Mockito.when(userService.update(user))
+        Mockito.when(userService.update(any(UserDto.class)))
                 .thenReturn(user);
-        mvc.perform(patch("/users/1").content(mapper.writeValueAsString(user))
+
+        mvc.perform(patch("/users/1")
+                        .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))

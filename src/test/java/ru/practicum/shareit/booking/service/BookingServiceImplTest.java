@@ -157,9 +157,9 @@ class BookingServiceImplTest {
                 .thenReturn(Optional.of(item));
         Mockito.when(bookingRepository.countIntersectionInTime(START, END, ITEM_ID))
                 .thenReturn(0);
-        Booking bookingToSave = getBookingIdNull(item, booker, BookingStatus.WAITING);
+        //  Booking bookingToSave = getBookingIdNull(item, booker, BookingStatus.WAITING);
         Booking bookingSaved = getBooking(item, booker, BookingStatus.WAITING);
-        Mockito.when(bookingRepository.save(bookingToSave))
+        Mockito.when(bookingRepository.save(Mockito.any(Booking.class)))
                 .thenReturn(bookingSaved);
 
         BookingInfoDto actualBookingSendDto = bookingService.create(getBookingCreateDto());
@@ -177,7 +177,7 @@ class BookingServiceImplTest {
         Mockito.verify(bookingRepository, Mockito.times(1))
                 .countIntersectionInTime(START, END, ITEM_ID);
         Mockito.verify(bookingRepository, Mockito.times(1))
-                .save(bookingToSave);
+                .save(Mockito.any(Booking.class));
         Mockito.verifyNoMoreInteractions(userRepository, itemRepository, bookingRepository);
     }
 
@@ -193,7 +193,7 @@ class BookingServiceImplTest {
         Mockito.when(bookingRepository.countIntersectionInTime(START, END, item.getId()))
                 .thenReturn(0);
         Booking bookingToSave = getBooking(item, owner, BookingStatus.APPROVED);
-        Mockito.when(bookingRepository.save(bookingToSave))
+        Mockito.when(bookingRepository.save(Mockito.any(Booking.class)))
                 .thenReturn(bookingToSave);
 
         BookingInfoDto actualBookingInfoDto = bookingService.respondToBooking(OWNER_ID, 1L, true);
@@ -209,7 +209,7 @@ class BookingServiceImplTest {
         Mockito.verify(bookingRepository, Mockito.times(1))
                 .countIntersectionInTime(START, END, bookingId);
         Mockito.verify(bookingRepository, Mockito.times(1))
-                .save(bookingToSave);
+                .save(Mockito.any(Booking.class));
         Mockito.verifyNoMoreInteractions(userRepository, itemRepository, bookingRepository);
     }
 

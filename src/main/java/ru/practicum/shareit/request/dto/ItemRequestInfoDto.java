@@ -5,7 +5,6 @@ import ru.practicum.shareit.item.dto.ItemInfoDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor

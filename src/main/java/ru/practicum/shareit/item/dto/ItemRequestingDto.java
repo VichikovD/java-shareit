@@ -7,7 +7,6 @@ import ru.practicum.shareit.validation.NotEmptyIfNotNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,18 +30,5 @@ public class ItemRequestingDto {
     private Boolean available;
 
     private Long requestId;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemRequestingDto that = (ItemRequestingDto) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
 

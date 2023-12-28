@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,17 +38,4 @@ public class Booking {
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
     private BookingStatus status;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Booking booking = (Booking) o;
-        return Objects.equals(id, booking.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

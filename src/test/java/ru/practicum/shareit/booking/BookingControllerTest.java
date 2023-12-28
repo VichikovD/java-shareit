@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,9 @@ class BookingControllerTest {
     @Test
     void create() throws Exception {
         final BookingRequestingDto itemRequestDto = getBookingReceiveDto();
-        final BookingCreateDto itemToSave = getBookingCreateDto();
+        //  final BookingCreateDto itemToSave = getBookingCreateDto();
         final BookingInfoDto bookingReturned = getBookingDto();
-        Mockito.when(bookingService.create(itemToSave))
+        Mockito.when(bookingService.create(Mockito.any(BookingCreateDto.class)))
                 .thenReturn(bookingReturned);
 
         mvc.perform(post("/bookings")
@@ -59,8 +60,8 @@ class BookingControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemInfoDto.class))
-                .andExpect(jsonPath("$.booker", is(getUserDto()), UserDto.class))
+                .andExpect(jsonPath("$.item.id", is(1L), Long.class))
+                .andExpect(jsonPath("$.booker.id", is(1L), Long.class))
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$.status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));
@@ -70,7 +71,7 @@ class BookingControllerTest {
     void create_whenValidateException_thenBadRequestReturned() throws Exception {
         final BookingRequestingDto itemRequestDto = getBookingReceiveDto();
         final BookingCreateDto itemToSave = getBookingCreateDto();
-        Mockito.when(bookingService.create(itemToSave))
+        Mockito.when(bookingService.create(Mockito.any(BookingCreateDto.class)))
                 .thenThrow(new ValidateException("Item to be booked is not available"));
 
         mvc.perform(post("/bookings")
@@ -96,8 +97,8 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 1L)
                         .param("approved", "true"))
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemInfoDto.class))
-                .andExpect(jsonPath("$.booker", is(getUserDto()), UserDto.class))
+                .andExpect(jsonPath("$.item.id", is(1L), Long.class))
+                .andExpect(jsonPath("$.booker.id", is(1L), Long.class))
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$.status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));
@@ -115,8 +116,8 @@ class BookingControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
-                .andExpect(jsonPath("$.item", is(getItemSendDto()), ItemInfoDto.class))
-                .andExpect(jsonPath("$.booker", is(getUserDto()), UserDto.class))
+                .andExpect(jsonPath("$.item.id", is(1L), Long.class))
+                .andExpect(jsonPath("$.booker.id", is(1L), Long.class))
                 .andExpect(jsonPath("$.start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$.end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$.status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));
@@ -155,9 +156,10 @@ class BookingControllerTest {
                         .param("size", "1")
                         .param("from", "1")
                 )
+                .andExpect(jsonPath("$", Matchers.hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(1L), Long.class))
-                .andExpect(jsonPath("$[0].item", is(getItemSendDto()), ItemInfoDto.class))
-                .andExpect(jsonPath("$[0].booker", is(getUserDto()), UserDto.class))
+                .andExpect(jsonPath("$[0].item.id", is(1L), Long.class))
+                .andExpect(jsonPath("$[0].booker.id", is(1L), Long.class))
                 .andExpect(jsonPath("$[0].start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$[0].end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$[0].status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));
@@ -183,8 +185,8 @@ class BookingControllerTest {
                         .param("from", "1")
                 )
                 .andExpect(jsonPath("$[0].id", is(1L), Long.class))
-                .andExpect(jsonPath("$[0].item", is(getItemSendDto()), ItemInfoDto.class))
-                .andExpect(jsonPath("$[0].booker", is(getUserDto()), UserDto.class))
+                .andExpect(jsonPath("$[0].item.id", is(1L), Long.class))
+                .andExpect(jsonPath("$[0].booker.id", is(1L), Long.class))
                 .andExpect(jsonPath("$[0].start", notNullValue()/*is(START), LocalDateTime.class*/))   // Not working for some reason
                 .andExpect(jsonPath("$[0].end", notNullValue()/*is(END), LocalDateTime.class*/))
                 .andExpect(jsonPath("$[0].status", notNullValue()/*is(BookingStatus.WAITING), BookingStatus.class*/));

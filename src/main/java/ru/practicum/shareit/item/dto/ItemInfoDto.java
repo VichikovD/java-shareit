@@ -6,7 +6,6 @@ import ru.practicum.shareit.booking.model.Booking;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,19 +29,6 @@ public class ItemInfoDto {
 
     private List<CommentInfoDto> comments;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemInfoDto itemInfoDto = (ItemInfoDto) o;
-        return Objects.equals(id, itemInfoDto.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
@@ -60,19 +46,6 @@ public class ItemInfoDto {
         private LocalDateTime end;
 
         private BookingStatus status;
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            BookingDto that = (BookingDto) o;
-            return id == that.id;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id);
-        }
     }
 
     public static BookingDto toBookingDto(Booking booking) {

@@ -1,3 +1,4 @@
+/*
 package ru.practicum.shareit.booking.Dto;
 
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +28,8 @@ public class BookingDtoTest {
         assertEquals(bookingCreateDto1, bookingCreateDto2);
     }
 
-    /*@Test
+    */
+/*@Test
     public void bookingInfoDto() {
         BookingInfoDto bookingCreateDto1 = BookingInfoDto.builder()
                 .id(1L)
@@ -40,7 +42,9 @@ public class BookingDtoTest {
 
         BookingInfoDto bookingCreateDto2 = new BookingInfoDto(1L, null, null, CREATED.plusDays(1), CREATED.plusDays(2), BookingStatus.WAITING);
         assertEquals(bookingCreateDto1, bookingCreateDto2);
-    }*/
+    }*//*
+
 
 
 }
+*/

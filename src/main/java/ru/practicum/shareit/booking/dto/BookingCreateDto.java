@@ -8,7 +8,6 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,17 +30,4 @@ public class BookingCreateDto {
     @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
     @Future(message = "End date and time should be in future")
     private LocalDateTime end;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BookingCreateDto that = (BookingCreateDto) o;
-        return Objects.hash(itemId) == Objects.hash(that.itemId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(itemId);
-    }
 }

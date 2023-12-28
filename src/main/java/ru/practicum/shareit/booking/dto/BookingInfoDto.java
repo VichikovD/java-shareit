@@ -26,15 +26,6 @@ public class BookingInfoDto {
 
     private BookingStatus status;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BookingInfoDto that = (BookingInfoDto) o;
-        return id == that.id;
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(id);
     }

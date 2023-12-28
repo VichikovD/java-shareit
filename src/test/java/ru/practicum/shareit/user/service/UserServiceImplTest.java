@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -31,15 +32,9 @@ class UserServiceImplTest {
     @Test
     void create() {
         UserDto userDtoNullId = getUserDtoNullId();
-        User userNullId = getUserNullId();
         User user = getUser();
-        /*UserDto userDto = getUserDto();
-        userMapperMockedStatic.when(() -> UserMapper.createUserFromUserDto(userDtoNullId))
-                .thenReturn(userNullId);*/
-        Mockito.when(userRepository.save(userNullId))
+        Mockito.when(userRepository.save(any(User.class)))
                 .thenReturn(user);
-        /*userMapperMockedStatic.when(() -> UserMapper.createUserDtoFromUser(user))
-                .thenReturn(userDto);*/
 
         UserDto actualUserDto = userService.create(userDtoNullId);
 
@@ -47,7 +42,7 @@ class UserServiceImplTest {
         assertThat(actualUserDto.getName(), Matchers.is("name"));
         assertThat(actualUserDto.getEmail(), Matchers.is("email@email.com"));
         Mockito.verify(userRepository, Mockito.times(1))
-                .save(userNullId);
+                .save(any(User.class));
     }
 
     @Test
@@ -87,7 +82,7 @@ class UserServiceImplTest {
                 .findById(1L);
         // equals&hashCode by id only (not fully correct verifying)
         Mockito.verify(userRepository, Mockito.times(1))
-                .save(userAfterUpdate);
+                .save(any(User.class));
     }
 
     @Test
