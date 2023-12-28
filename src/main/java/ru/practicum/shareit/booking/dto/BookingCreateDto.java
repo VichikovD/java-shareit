@@ -37,7 +37,7 @@ public class BookingCreateDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BookingCreateDto that = (BookingCreateDto) o;
-        return itemId == that.itemId;
+        return Objects.hash(itemId) == Objects.hash(that.itemId);
     }
 
     @Override
