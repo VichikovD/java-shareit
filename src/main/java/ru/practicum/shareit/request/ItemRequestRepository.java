@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> {
-    List<ItemRequest> findAllByRequestingUserId(long requestingUser);
+    List<ItemRequest> findAllByRequestingUserId(long requestingUserId);
 
     /*@Query(value = "SELECT * " +
             "FROM item_requests AS ir " +

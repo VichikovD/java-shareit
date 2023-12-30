@@ -19,7 +19,7 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requesting_user_id")
     User requestingUser;
 
@@ -28,9 +28,4 @@ public class ItemRequest {
 
     @Column(name = "created")
     LocalDateTime created;
-
-    /*@OneToMany(mappedBy = "itemRequest")
-    Set<Item> itemResponses;*/
-
-
 }

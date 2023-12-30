@@ -35,22 +35,4 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "item_request_id")
     private ItemRequest itemRequest;
-
-    /*@OneToMany(mappedBy = "item")
-    private Set<Booking> bookings;*/
-/*
-    @OneToMany(mappedBy = "item")
-    private Set<Comment> comments;*/
-
-/*    public void updateByItemDto(ItemRequestingDto itemDto, Item item) {
-        if (itemDto.getName() != null) {
-            item.setName(itemDto.getName());
-        }
-        if (itemDto.getDescription() != null) {
-            item.setDescription(itemDto.getDescription());
-        }
-        if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());
-        }
-    }*/
 }

@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 public class CommentInfoDto {
     Long id;
 
-    @NotBlank(message = "Text fromString comment should not be empty or null")
     String text;
 
     String authorName;
