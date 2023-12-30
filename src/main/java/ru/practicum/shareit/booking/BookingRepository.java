@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
@@ -89,21 +90,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "LIMIT 1", nativeQuery = true)
     Optional<Booking> findNextForDateTime(long itemId, LocalDateTime time);
 
-    @Query(value = "SELECT * " +
+    /*@Query(value = "SELECT * " +
             "FROM bookings AS b " +
             "JOIN items AS i ON b.item_id = i.item_id " +
             "JOIN users AS u ON b.booker_id = u.user_id " +
             "WHERE (b.start_date_time < ?2) AND (b.item_id IN ?1) AND (b.status = 'APPROVED') " +
-            "ORDER BY b.start_date_time DESC", nativeQuery = true)
-    List<Booking> findAllLastForDateTime(Collection<Long> itemIdList, LocalDateTime time);
-
-    @Query(value = "SELECT * " +
-            "FROM bookings AS b " +
-            "JOIN items AS i ON b.item_id = i.item_id " +
-            "JOIN users AS u ON b.booker_id = u.user_id " +
-            "WHERE (b.start_date_time > ?2) AND (b.item_id IN ?1) AND (b.status = 'APPROVED') " +
-            "ORDER BY b.start_date_time DESC", nativeQuery = true)
-    List<Booking> findAllNextForDateTime(Collection<Long> itemIdList, LocalDateTime time);
+            "ORDER BY b.start_date_time DESC", nativeQuery = true)*/
+    List<Booking> findAllByItemIdInAndStatus(Collection<Long> itemIdList, BookingStatus status, Sort sort);
 
     @Query(value = "SELECT COUNT(b.booking_id) " +
             "FROM bookings AS b " +

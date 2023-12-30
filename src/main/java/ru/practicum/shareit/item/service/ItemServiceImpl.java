@@ -1,12 +1,12 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -37,7 +37,6 @@ public class ItemServiceImpl implements ItemService {
     final BookingRepository bookingRepository;
     final CommentRepository commentRepository;
     final ItemRequestRepository itemRequestRepository;
-    private static final Sort SORT_START_DESC = Sort.by(Sort.Direction.DESC, "start");
     private static final Sort SORT_START_ASC = Sort.by(Sort.Direction.ASC, "start");
 
 
@@ -66,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
         long itemId = itemRequestingDto.getId();
 
         // Check if repository has user with same id
-        User user = userRepository.findById(ownerId)
+        userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + ownerId));
         // Check if repository has owner with same id who has same item
         Item item = itemRepository.findByIdAndOwnerId(itemId, ownerId)
@@ -133,12 +132,6 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toInfoDto(commentToReturn);
     }
 
-    private PageRequest getPageRequest(Sort.Direction direction, String sortParam, int limit, int offset) {
-        Sort sort = Sort.by(direction, sortParam);
-        // Данное решение из "советы ментора", но для соответствия тз я бы делал через нативные запросы + order, limit, offset
-        return PageRequest.of((offset / limit), limit, sort);
-    }
-
     private void setLastAndNextBookingToItemDto(ItemInfoDto itemInfoDto) {
         long itemId = itemInfoDto.getId();
         Booking lastBooking = bookingRepository.findLastForDateTime(itemId, LocalDateTime.now())
@@ -161,23 +154,20 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemInfoDto::getId)
                 .collect(Collectors.toList());
 
-        List<Booking> lastBookingList = bookingRepository.findAllLastForDateTime(itemIdList, LocalDateTime.now());
-        Map<Long, List<Booking>> lastBookingMap = lastBookingList.stream()
+        List<Booking> bookingList = bookingRepository.findAllByItemIdInAndStatus(itemIdList, BookingStatus.APPROVED, SORT_START_ASC);
+        Map<Long, List<Booking>> bookingMap = bookingList.stream()
                 .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+
         for (ItemInfoDto itemInfoDto : itemInfoDtoList) {
-            List<Booking> lastBookings = lastBookingMap.getOrDefault(itemInfoDto.getId(), new ArrayList<>());
-            Booking lastBooking = lastBookings.stream()
+            List<Booking> bookings = bookingMap.getOrDefault(itemInfoDto.getId(), new ArrayList<>());
+            Booking lastBooking = bookings.stream()
+                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                     .max(Comparator.comparing(Booking::getStart))
                     .orElse(null);
             itemInfoDto.setLastBooking(ItemInfoDto.toBookingDto(lastBooking));
-        }
 
-        List<Booking> nextBookingList = bookingRepository.findAllNextForDateTime(itemIdList, LocalDateTime.now());
-        Map<Long, List<Booking>> nextBookingMap = nextBookingList.stream()
-                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
-        for (ItemInfoDto itemInfoDto : itemInfoDtoList) {
-            List<Booking> nextBookingsList = nextBookingMap.getOrDefault(itemInfoDto.getId(), new ArrayList<>());
-            Booking nextBooking = nextBookingsList.stream()
+            Booking nextBooking = bookings.stream()
+                    .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                     .min(Comparator.comparing(Booking::getStart))
                     .orElse(null);
             itemInfoDto.setNextBooking(ItemInfoDto.toBookingDto(nextBooking));
@@ -201,7 +191,7 @@ public class ItemServiceImpl implements ItemService {
     private void validatePossibilityToComment(long userId, long itemId) {
         long bookingQuantity = bookingRepository.countAllPastForItemByTime(itemId, userId, LocalDateTime.now());
         if (bookingQuantity < 1) {
-            throw new NotAvailableException("User with id " + userId + " can not comment item with id " + itemId + "" +
+            throw new NotAvailableException("User with id " + userId + " can not comment item with id " + itemId +
                     " due to " + bookingQuantity + " times booked this item in past");
         }
     }
