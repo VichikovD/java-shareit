@@ -268,42 +268,29 @@ class BookingRepositoryTest {
 
     @Test
     void findAllLastForDateTime() {
-        // 1,2,4 bookings are last for this LDT
-        LocalDateTime ldt = CURRENT;
         Collection<Long> itemIdList = List.of(1L);
 
-        List<Booking> bookingList = bookingRepository.findAllLastForDateTime(itemIdList, ldt);
+        List<Booking> bookingList = bookingRepository.findAllByItemIdInAndStatus(itemIdList,
+                BookingStatus.APPROVED,
+                Sort.by(Sort.Direction.ASC, "start"));
         Booking actualBooking1 = bookingList.get(0);
         Booking actualBooking2 = bookingList.get(1);
         Booking actualBooking3 = bookingList.get(2);
+        Booking actualBooking4 = bookingList.get(3);
+        Booking actualBooking5 = bookingList.get(4);
 
-        assertThat(bookingList.size(), is(3));
-        assertThat(actualBooking1.getId(), is(2L));
+        assertThat(bookingList.size(), is(5));
+        assertThat(actualBooking1.getId(), is(4L));
         assertThat(actualBooking2.getId(), is(1L));
-        assertThat(actualBooking3.getId(), is(4L));
-    }
-
-    @Test
-    void findAllNextForDateTime() {
-        // 3,5 bookings are last for this LDT
-        LocalDateTime ldt = CURRENT;
-        Collection<Long> itemIdList = List.of(1L);
-
-        List<Booking> bookingList = bookingRepository.findAllNextForDateTime(itemIdList, ldt);
-        Booking actualBooking1 = bookingList.get(0);
-        Booking actualBooking2 = bookingList.get(1);
-
-        assertThat(bookingList.size(), is(2));
-        assertThat(actualBooking1.getId(), is(5L));
-        assertThat(actualBooking2.getId(), is(3L));
+        assertThat(actualBooking3.getId(), is(2L));
+        assertThat(actualBooking4.getId(), is(3L));
+        assertThat(actualBooking5.getId(), is(5L));
     }
 
     @Test
     void countAllPastForItemByTime() {
         // Only 1 finished booking for this ldt for user 2L
-        LocalDateTime ldt = CURRENT;
-
-        long bookedQuantity = bookingRepository.countAllPastForItemByTime(1L, 2L, ldt);
+        long bookedQuantity = bookingRepository.countAllPastForItemByTime(1L, 2L, CURRENT);
 
         assertThat(bookedQuantity, is(1L));
     }
