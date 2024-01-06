@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.groupMarker.OnCreate;
-import ru.practicum.shareit.groupMarker.OnUpdate;
+//import ru.practicum.shareit.groupMarker.OnCreate;
+//import ru.practicum.shareit.groupMarker.OnUpdate;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@RequestBody @Validated(OnCreate.class) UserDto userDto) {
+    public UserDto create(@RequestBody /*@Validated(OnCreate.class) */UserDto userDto) {
         log.info("POST \"/users\" Body=" + userDto);
         UserDto userToReturn = userService.create(userDto);
         log.debug(userToReturn.toString());
@@ -36,7 +36,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public UserDto update(@PathVariable Long id,
-                          @RequestBody @Validated(OnUpdate.class) UserDto user) {
+                          @RequestBody /*@Validated(OnUpdate.class) */UserDto user) {
         log.info("PATCH \"/users/" + id + "\" Body=" + user);
         user.setId(id);
         UserDto userToReturn = userService.update(user);

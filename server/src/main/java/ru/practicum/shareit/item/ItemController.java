@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.groupMarker.OnCreate;
-import ru.practicum.shareit.groupMarker.OnUpdate;
+/*import ru.practicum.shareit.groupMarker.OnCreate;
+import ru.practicum.shareit.groupMarker.OnUpdate;*/
 import ru.practicum.shareit.item.dto.CommentInfoDto;
 import ru.practicum.shareit.item.dto.CommentRequestingDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
@@ -31,7 +31,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemInfoDto create(@RequestBody @Validated(OnCreate.class) ItemRequestingDto itemRequestingDto,
+    public ItemInfoDto create(@RequestBody /*@Validated(OnCreate.class)*/ ItemRequestingDto itemRequestingDto,
                               @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("POST \"/items\" Body={}, Headers:(X-Sharer-User-Id)={}", itemRequestingDto, userId);
         ItemInfoDto itemToReturn = itemService.create(itemRequestingDto, userId);
@@ -40,7 +40,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemInfoDto update(@RequestBody @Validated(OnUpdate.class) ItemRequestingDto itemRequestingDto,
+    public ItemInfoDto update(@RequestBody /*@Validated(OnUpdate.class)*/ ItemRequestingDto itemRequestingDto,
                               @PathVariable long itemId,
                               @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("PUT \"/items/" + itemId + "\" Body={}, Headers:(X-Sharer-User-Id)={}", itemRequestingDto, userId);
