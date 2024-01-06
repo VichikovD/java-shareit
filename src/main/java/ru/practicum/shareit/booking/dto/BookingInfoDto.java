@@ -2,21 +2,21 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.item.dto.ItemReceiveDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
-public class BookingDto {
+public class BookingInfoDto {
     private long id;
 
-    private ItemReceiveDto item;
+    private ItemInfoDto item;
 
     private UserDto booker;
 
@@ -25,4 +25,8 @@ public class BookingDto {
     private LocalDateTime end;
 
     private BookingStatus status;
+
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

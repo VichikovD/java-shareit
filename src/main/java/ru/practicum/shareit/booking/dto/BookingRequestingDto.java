@@ -13,14 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
 @StartBeforeEnd
-public class BookingReceiveDto {
+public class BookingRequestingDto {
+    //  Requesting чтобы при создании dto для Item, не получился ItemRequestDto,
+    //  который можно спутать с сущностью ItemRequest
     @NotNull(message = "ItemId should not be null")
     private long itemId;
-
-    private long bookerId;
 
     @NotNull(message = "Start date-time should not be null")
     @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
@@ -31,4 +30,5 @@ public class BookingReceiveDto {
     @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
     @Future(message = "End date and time should be in future")
     private LocalDateTime end;
+
 }

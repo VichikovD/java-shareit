@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.shareit.groupMarker.OnCreate;
 import ru.practicum.shareit.groupMarker.OnUpdate;
 import ru.practicum.shareit.validation.NotEmptyIfNotNull;
@@ -9,7 +8,10 @@ import ru.practicum.shareit.validation.NotEmptyIfNotNull;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class UserDto {
     private Long id;

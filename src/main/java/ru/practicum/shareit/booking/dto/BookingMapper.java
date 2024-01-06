@@ -13,21 +13,29 @@ import java.util.List;
 
 @Component
 public class BookingMapper {
-    public static Booking bookingDtoReceiveToBooking(BookingReceiveDto bookingReceiveDto, User booker, Item item,
-                                                     BookingStatus bookingStatus) {
+    public static Booking toModel(BookingCreateDto bookingCreateDto, User booker, Item item, BookingStatus bookingStatus) {
         return Booking.builder()
                 .item(item)
                 .booker(booker)
-                .start(bookingReceiveDto.getStart())
-                .end(bookingReceiveDto.getEnd())
+                .start(bookingCreateDto.getStart())
+                .end(bookingCreateDto.getEnd())
                 .status(bookingStatus)
                 .build();
     }
 
-    public static BookingDto bookingToBookingDtoSend(Booking booking) {
-        return BookingDto.builder()
+    public static BookingCreateDto toCreateDto(BookingRequestingDto bookingRequestingDto, long bookerId) {
+        return BookingCreateDto.builder()
+                .itemId(bookingRequestingDto.getItemId())
+                .bookerId(bookerId)
+                .start(bookingRequestingDto.getStart())
+                .end(bookingRequestingDto.getEnd())
+                .build();
+    }
+
+    public static BookingInfoDto toInfoDto(Booking booking) {
+        return BookingInfoDto.builder()
                 .id(booking.getId())
-                .item(ItemMapper.itemReceiveDtoFromItem(booking.getItem()))
+                .item(ItemMapper.toItemInfoDto(booking.getItem()))
                 .booker(UserMapper.createUserDtoFromUser(booking.getBooker()))
                 .start(booking.getStart())
                 .end(booking.getEnd())
@@ -35,11 +43,11 @@ public class BookingMapper {
                 .build();
     }
 
-    public static List<BookingDto> bookingListToBookingDtoSendList(List<Booking> bookingList) {
-        List<BookingDto> bookingDtoList = new ArrayList<>();
+    public static List<BookingInfoDto> toBookingInfoDtoList(List<Booking> bookingList) {
+        List<BookingInfoDto> bookingInfoDtoList = new ArrayList<>();
         for (Booking booking : bookingList) {
-            bookingDtoList.add(bookingToBookingDtoSend(booking));
+            bookingInfoDtoList.add(toInfoDto(booking));
         }
-        return bookingDtoList;
+        return bookingInfoDtoList;
     }
 }

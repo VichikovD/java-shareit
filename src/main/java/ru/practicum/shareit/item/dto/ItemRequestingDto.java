@@ -12,9 +12,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
-public class ItemReceiveDto {
+public class ItemRequestingDto {
+    //  Requesting чтобы при создании dto для Item, не получился ItemRequestDto,
+    //  который можно спутать с сущностью ItemRequest
     private Long id;
 
     @NotBlank(groups = OnCreate.class, message = "Item name should not be empty")
@@ -27,5 +28,7 @@ public class ItemReceiveDto {
 
     @NotNull(groups = OnCreate.class, message = "Item available status should not be empty")
     private Boolean available;
+
+    private Long requestId;
 }
 

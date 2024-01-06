@@ -1,7 +1,8 @@
 package ru.practicum.shareit.item.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentInfoDto;
+import ru.practicum.shareit.item.dto.CommentRequestingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -13,8 +14,8 @@ import java.util.List;
 
 @Component
 public class CommentMapper {
-    public static CommentDto toCommentDto(Comment comment) {
-        return CommentDto.builder()
+    public static CommentInfoDto toInfoDto(Comment comment) {
+        return CommentInfoDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
                 .authorName(comment.getAuthor().getName())
@@ -23,18 +24,18 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentDto> toCommentDtoList(List<Comment> commentList) {
-        List<CommentDto> commentDtoList = new ArrayList();
+    public static List<CommentInfoDto> toCommentInfoDtoList(List<Comment> commentList) {
+        List<CommentInfoDto> commentInfoDtoList = new ArrayList();
         for (Comment comment : commentList) {
-            commentDtoList.add(toCommentDto(comment));
+            commentInfoDtoList.add(toInfoDto(comment));
         }
-        return commentDtoList;
+        return commentInfoDtoList;
     }
 
-    public static Comment fromCommentDto(CommentDto commentDto, Item item, User author) {
+    public static Comment toModel(CommentRequestingDto commentRequestingDto, Item item, User author) {
         return Comment.builder()
                 .id(null)
-                .text(commentDto.getText())
+                .text(commentRequestingDto.getText())
                 .author(author)
                 .item(item)
                 .creationDate(Timestamp.from(Instant.now()))
