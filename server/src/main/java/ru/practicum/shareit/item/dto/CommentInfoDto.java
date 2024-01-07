@@ -18,7 +18,7 @@ public class CommentInfoDto {
 
     LocalDateTime created;
 
-    //    @JsonIgnore
+    //  @JsonIgnore
     Long itemId;
 
 }

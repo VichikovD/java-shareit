@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.groupMarker.OnCreate;
 import ru.practicum.shareit.groupMarker.OnUpdate;
+import ru.practicum.shareit.item.dto.CommentRequestingDto;
 import ru.practicum.shareit.item.dto.ItemRequestingDto;
 
 import javax.validation.constraints.Min;
@@ -24,8 +25,8 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody @Validated(OnCreate.class) ItemRequestingDto itemRequestingDto,
-                                         @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") long userId,
+                                         @RequestBody @Validated(OnCreate.class) ItemRequestingDto itemRequestingDto) {
         log.info("POST \"/items\" Body={}, Headers:(X-Sharer-User-Id)={}", itemRequestingDto, userId);
         ResponseEntity<Object> itemToReturn = itemClient.create(userId, itemRequestingDto);
         log.debug(itemToReturn.toString());
@@ -33,9 +34,9 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> update(@RequestBody @Validated(OnUpdate.class) ItemRequestingDto itemRequestingDto,
-                                         @PathVariable long itemId,
-                                         @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<Object> update(@RequestHeader("X-Sharer-User-Id") long userId,
+                                         @RequestBody @Validated(OnUpdate.class) ItemRequestingDto itemRequestingDto,
+                                         @PathVariable long itemId) {
         log.info("PUT \"/items/" + itemId + "\" Body={}, Headers:(X-Sharer-User-Id)={}", itemRequestingDto, userId);
         ResponseEntity<Object> itemToReturn = itemClient.update(itemId, userId, itemRequestingDto);
         log.debug(itemToReturn.toString());
@@ -53,8 +54,8 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getByItemId(@PathVariable long itemId,
-                                              @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<Object> getByItemId(@RequestHeader("X-Sharer-User-Id") long userId,
+                                              @PathVariable long itemId) {
         log.info("GET \"/items/" + itemId + "\" , Headers:(X-Sharer-User-Id)={}", userId);
         ResponseEntity<Object> itemReturn = itemClient.getByItemId(itemId, userId);
         log.debug(itemReturn.toString());
@@ -73,19 +74,19 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<Object> deleteByUserIdAndItemId(@PathVariable long itemId,
-                                                          @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<Object> deleteByUserIdAndItemId(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                          @PathVariable long itemId) {
         log.info("DELETE \"/items/{}\" , Headers:(X-Sharer-User-Id)={}", itemId, userId);
         return itemClient.deleteByItemId(itemId, userId);
     }
-/*
+
     @PostMapping("/{itemId}/comment")
-    public CommentInfoDto createComment(@PathVariable long itemId,
-                                        @RequestBody @Validated CommentRequestingDto commentRequestingDto,
-                                        @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<Object> createComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                @PathVariable long itemId,
+                                                @RequestBody @Validated CommentRequestingDto commentRequestingDto) {
         log.info("POST \"/items/{}/comment\" Body={}, Headers:(X-Sharer-User-Id)={}", itemId, commentRequestingDto, userId);
-        CommentInfoDto commentToReturn = itemClient.createComment(commentRequestingDto, itemId, userId);
+        ResponseEntity<Object> commentToReturn = itemClient.createComment(itemId, userId, commentRequestingDto);
         log.debug(commentToReturn.toString());
         return commentToReturn;
-    }*/
+    }
 }

@@ -16,19 +16,19 @@ import java.time.LocalDateTime;
 @Builder
 @StartBeforeEnd
 public class BookingRequestingDto {
-	//  Requesting чтобы при создании dto для Item, не получился ItemRequestDto,
-	//  который можно спутать с сущностью ItemRequest
-	@NotNull(message = "ItemId should not be null")
-	private long itemId;
+    //  Requesting чтобы при создании dto для Item, не получился ItemRequestDto,
+    //  который можно спутать с сущностью ItemRequest
+    @NotNull(message = "ItemId should not be null")
+    private long itemId;
 
-	@NotNull(message = "Start date-time should not be null")
-	@DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
-	@FutureOrPresent(message = "Start date and time should not be in past")
-	private LocalDateTime start;
+    @NotNull(message = "Start date-time should not be null")
+    @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
+    @FutureOrPresent(message = "Start date and time should not be in past")
+    private LocalDateTime start;
 
-	@NotNull(message = "End date-time should not be null")
-	@DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
-	@Future(message = "End date and time should be in future")
-	private LocalDateTime end;
+    @NotNull(message = "End date-time should not be null")
+    @DateTimeFormat(pattern = "YYYY-MM-DDTHH:mm:ss")
+    @Future(message = "End date and time should be in future")
+    private LocalDateTime end;
 
 }

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingInfoDto;
@@ -13,13 +12,11 @@ import ru.practicum.shareit.booking.dto.BookingRequestingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.state.BookingState;
 
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
 @Slf4j
-@Validated
 public class BookingController {
     BookingService bookingService;
 
@@ -28,7 +25,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingInfoDto create(@RequestBody @Validated BookingRequestingDto bookingRequestingDto,
+    public BookingInfoDto create(@RequestBody BookingRequestingDto bookingRequestingDto,
                                  @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("POST \"/bookings\" BODY={} , Headers:(X-Sharer-User-Id)={}", bookingRequestingDto, userId);
         BookingCreateDto bookingCreateDto = BookingMapper.toCreateDto(bookingRequestingDto, userId);
@@ -59,8 +56,8 @@ public class BookingController {
     @GetMapping
     public List<BookingInfoDto> findAllBookingByBookerIdAndState(@RequestParam(defaultValue = "ALL") BookingState state,
                                                                  @RequestHeader("X-Sharer-User-Id") long userId,
-                                                                 @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
-                                                                 @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
+                                                                 @RequestParam(name = "size", defaultValue = "10") int limit,
+                                                                 @RequestParam(name = "from", defaultValue = "0") int offset) {
         log.info("GET \"/bookings?state={}&from={}&size={}\", Headers:(X-Sharer-User-Id)={}", state, offset, limit, userId);
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);
@@ -72,8 +69,8 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingInfoDto> findAllBookingByOwnerIdAndState(@RequestParam(defaultValue = "ALL") BookingState state,
                                                                 @RequestHeader("X-Sharer-User-Id") long userId,
-                                                                @RequestParam(name = "size", defaultValue = "10") @Min(value = 1) int limit,
-                                                                @RequestParam(name = "from", defaultValue = "0") @Min(value = 0) int offset) {
+                                                                @RequestParam(name = "size", defaultValue = "10") int limit,
+                                                                @RequestParam(name = "from", defaultValue = "0") int offset) {
         log.info("GET \"/bookings/owner?state={}\", Headers:(X-Sharer-User-Id)={}", state, userId);
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Pageable pageable = PageRequest.of((offset / limit), limit, sort);

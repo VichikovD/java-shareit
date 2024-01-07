@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.request;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,15 +11,16 @@ import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.item.dto.CommentRequestingDto;
 import ru.practicum.shareit.item.dto.ItemRequestingDto;
+import ru.practicum.shareit.request.dto.ItemRequestRequestingDto;
 
 import java.util.Map;
 
 @Service
-public class ItemClient extends BaseClient {
-    private static final String API_PREFIX = "/items";
+public class ItemRequestClient extends BaseClient {
+    private static final String API_PREFIX = "/requests";
 
     @Autowired
-    public ItemClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public ItemRequestClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
@@ -37,8 +38,8 @@ public class ItemClient extends BaseClient {
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> create(long userId, ItemRequestingDto itemRequestingDto) {
-        return post("", userId, itemRequestingDto);
+    public ResponseEntity<Object> create(long userId, ItemRequestRequestingDto itemRequestRequestingDto) {
+        return post("", userId, itemRequestRequestingDto);
     }
 
     public ResponseEntity<Object> update(long itemId, long userId, ItemRequestingDto userDto) {
@@ -71,15 +72,27 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> createComment(long itemId, long userId, CommentRequestingDto commentRequestingDto) {
-        return post("/" + itemId + "/comment", userId, commentRequestingDto);
+        return post("/" + itemId, userId, commentRequestingDto);
     }
 
     public ResponseEntity<Object> getAll() {
         return get("");
     }
 
-    public ResponseEntity<Object> getById(long userId) {
-        return get("/" + userId);
+    public ResponseEntity<Object> getById(long itemId, long userId) {
+        return get("/" + itemId, userId);
+    }
+
+    public ResponseEntity<Object> getAllByRequestingUserId(long userId) {
+        return get("", userId);
+    }
+
+    public ResponseEntity<Object> getAllWithOffsetAndLimit(long userId, int from, int size) {
+        Map<String, Object> parameters = Map.of(
+                "from", from,
+                "size", size
+        );
+        return get("/all?from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> deleteById(long userId) {

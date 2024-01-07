@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   gateway:
-    build: ./gateway
+    build: ./gateway/
     container_name: shareit-gateway
     ports:
       - "8080:8080"
@@ -11,24 +11,19 @@ services:
       - SHAREIT_SERVER_URL=http://server:9090
 
   server:
-    build: ./server
+    build: ./server/
     container_name: shareit-server
     ports:
       - "9090:9090"
     depends_on:
       - db
     environment:
-      - DB_NAME=shareIt
-      - DB_HOST=localhost
-      - DB_PORT=5432
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
   db:
     # образ, из которого должен быть запущен контейнер
     image: postgres:13.7-alpine
-    # volume и связанная с ним директория в контейнере
-    volumes:
-      - /var/lib/postgresql/data/
     container_name: shareit-db
     ports:
       - "6541:5432"

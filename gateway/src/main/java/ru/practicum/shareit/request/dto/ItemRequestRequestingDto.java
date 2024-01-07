@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 public class ItemRequestRequestingDto {
+    @NotBlank(message = "ItemRequest's description should not be empty or null")
     private String description;
 
     @Override

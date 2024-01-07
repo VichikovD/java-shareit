@@ -13,8 +13,11 @@ import java.util.List;
 @Builder
 public class ItemRequestInfoDto {
     private long id;
+
     private String description;
+
     private LocalDateTime created;
+
     // items == responses
     private List<ItemInfoDto> items;
 }
