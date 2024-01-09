@@ -9,9 +9,6 @@ import ru.practicum.shareit.groupMarker.OnCreate;
 import ru.practicum.shareit.groupMarker.OnUpdate;
 import ru.practicum.shareit.user.dto.UserDto;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @RestController
 @RequestMapping("/users")

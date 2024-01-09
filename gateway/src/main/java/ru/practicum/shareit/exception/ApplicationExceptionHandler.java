@@ -13,14 +13,6 @@ import java.io.StringWriter;
 @RestControllerAdvice
 @Slf4j
 public class ApplicationExceptionHandler {
-    /*@ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleNotAvailableException(NotAvailableException e) {
-        String errorMessage = e.getMessage();
-        log.error("Not Available Exception = {}", errorMessage);
-        return new ErrorResponse("NotAvailableException", errorMessage);
-    }
-*/
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidateException(MethodArgumentNotValidException e) {
@@ -28,46 +20,14 @@ public class ApplicationExceptionHandler {
         log.error("Method Argument Not Valid Exception = {}", errorMessage);
         return new ErrorResponse("MethodArgumentNotValidException", errorMessage);
     }
-/*
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBookingStateConvertingException(MethodArgumentTypeMismatchException e) {
-        String errorMessage = e.getMessage();
-        log.error("Method Argument Type Mismatch Exception = {}", errorMessage);
-        return new ErrorResponse(e.getCause().getCause().getMessage(), e.getMessage());
-    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMissingRequestHeaderException(MissingRequestHeaderException e) {
+    public ErrorResponse handleValidateException(IllegalArgumentException e) {
         String errorMessage = e.getMessage();
-        log.error("Missing Request Header Exception = {}", errorMessage);
-        return new ErrorResponse("MissingRequestHeaderException", errorMessage);
+        log.error("Illegal Argument Exception Exception = {}", errorMessage);
+        return new ErrorResponse("IllegalArgumentException", errorMessage);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        String errorMessage = e.getMessage();
-        log.error("Http Message Not Readable Exception = {}", errorMessage);
-        return new ErrorResponse("HttpMessageNotReadableException", errorMessage);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(NotFoundException e) {
-        String errorMessage = e.getMessage();
-        log.error("NotFoundException = {}", errorMessage);
-        return new ErrorResponse("NotFoundException", errorMessage);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidateException(ValidateException e) {
-        String errorMessage = e.getMessage();
-        log.error("Validate Exception = {}", errorMessage);
-        return new ErrorResponse("ValidateException", errorMessage);
-    }*/
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

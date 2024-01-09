@@ -40,7 +40,7 @@ class ItemRequestControllerTest {
     void create() throws Exception {
         final ItemRequestRequestingDto itemRequestToSave = getItemRequestReceiveDto();
         final ItemRequestInfoDto itemRequestSaved = getItemRequestSendDto();
-        Mockito.when(itemRequestService.create(itemRequestToSave, 1L))
+        Mockito.when(itemRequestService.create(Mockito.any(ItemRequestRequestingDto.class), Mockito.anyLong()))
                 .thenReturn(itemRequestSaved);
 
         mvc.perform(post("/requests")

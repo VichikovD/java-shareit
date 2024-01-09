@@ -25,8 +25,4 @@ public class BookingInfoDto {
     private LocalDateTime end;
 
     private BookingStatus status;
-
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
