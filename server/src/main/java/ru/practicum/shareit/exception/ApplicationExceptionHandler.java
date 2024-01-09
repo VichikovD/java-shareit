@@ -1,6 +1,7 @@
 package ru.practicum.shareit.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -59,6 +60,14 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException e) {
+        String errorMessage = e.getMessage();
+        log.error("NotFoundException = {}", errorMessage);
+        return new ErrorResponse("NotFoundException", errorMessage);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConstraintViolationException(ConstraintViolationException e) {
         String errorMessage = e.getMessage();
         log.error("NotFoundException = {}", errorMessage);
         return new ErrorResponse("NotFoundException", errorMessage);

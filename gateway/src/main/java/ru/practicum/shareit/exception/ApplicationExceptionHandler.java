@@ -26,7 +26,7 @@ public class ApplicationExceptionHandler {
     public ErrorResponse handleValidateException(IllegalArgumentException e) {
         String errorMessage = e.getMessage();
         log.error("Illegal Argument Exception Exception = {}", errorMessage);
-        return new ErrorResponse("IllegalArgumentException", errorMessage);
+        return new ErrorResponse(errorMessage, e.toString());
     }
 
     @ExceptionHandler
