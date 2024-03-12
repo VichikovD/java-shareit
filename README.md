@@ -11,4 +11,4 @@ Application for booking items. With http-request filtering gateway.
 
 ### Tests coverage: ###
 ---
-![Logical Data Model of DB](https://github.com/VichikovD/java-filmorate/blob/main/stats/share-it_tests_coverage.png)
+![Tests coverage](https://github.com/VichikovD/java-shareit/blob/main/stats/share-it_tests_coverage.png)
